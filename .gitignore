@@ -1,0 +1,18 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+target
+.settings
+.project
+.classpath
+.factorypath
+bin
+
+logs
+*.log
+
+.DS_Store
+
