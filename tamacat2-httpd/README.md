@@ -27,7 +27,7 @@
   }
   ```
   - docsRoot(String path) ... Static Web Contents directory. (HTML/CSS/Images etc.)
-    - ${server.home} ... Valiables for current directory.
+    - ${server.home} ... Variable for server home path.
   - contentEncoding("gzip") ... Compress response body (gzip)
 
 
