@@ -60,9 +60,14 @@ public class ReverseUtils {
 		Pattern.CASE_INSENSITIVE
 	);
 
-	private static final String HEADER_PROPERTIES = "reverse-header.properties";
-	private static final String DEFAULT_HEADER_PROPERTIES = "cloud/tamacat2/reverse/util/reverse-header.properties";
+	static final String HEADER_PROPERTIES = "reverse-header.properties";
+	static final String DEFAULT_HEADER_PROPERTIES = "cloud/tamacat2/reverse/util/reverse-header.properties";
+	//Remove hop-by-hop request headers.
+	static final String DEFAULT_REMOVE_REQUEST_HEADERS = "removeHeaders=Content-Length,Transfer-Encoding,Accept-Encoding,Connection,Keep-Alive,Proxy-Authenticate,Proxy-Authorization,TE,Trailers,Upgrade,Range";
 
+	//Remove hop-by-hop response headers.
+	static final String DEFAULT_REMOVE_RESPONSE_HEADERS = "Content-Type,Content-Encoding,Content-Length,Transfer-Encoding,Connection,Keep-Alive,TE,Trailers,Upgrade,Content-MD5";
+	
 	private static final Set<String> removeRequestHeaders = new HashSet<>();
 	private static final Set<String> removeResponseHeaders = new HashSet<>();
 
@@ -72,7 +77,13 @@ public class ReverseUtils {
 		try {
 			props = PropertyUtils.getProperties(HEADER_PROPERTIES);
 		} catch (Exception e) {
-			props = PropertyUtils.getProperties(DEFAULT_HEADER_PROPERTIES);
+			try {
+				props = PropertyUtils.getProperties(DEFAULT_HEADER_PROPERTIES);
+			} catch (Exception e2) {
+				props = new Properties();
+				props.setProperty("response.removeHeaders", DEFAULT_REMOVE_REQUEST_HEADERS);
+				props.setProperty("request.removeHeaders", DEFAULT_REMOVE_RESPONSE_HEADERS);
+			}
 		}
 		if (props != null) {
 			String removeHeaders1 = props.getProperty("request.removeHeaders");
