@@ -27,7 +27,7 @@ public class MimeUtils {
 	private static Properties mimeTypes;
 
 	static {
-		mimeTypes = PropertyUtils.marge(
+		mimeTypes = PropertyUtils.merge(
 				"cloud/tamacat2/httpd/util/mime-types.properties",
 				"mime-types.properties");
 	}

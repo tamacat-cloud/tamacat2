@@ -77,13 +77,13 @@ public abstract class PropertyUtils {
 		}
 	}
 
-	public static Properties marge(String defaultFile, String addFile) {
-		return marge(defaultFile, addFile, ClassUtils.getDefaultClassLoader());
+	public static Properties merge(String defaultFile, String addFile) {
+		return merge(defaultFile, addFile, ClassUtils.getDefaultClassLoader());
 	}
 
 	/**
 	 * <p>
-	 * Marge the two property files.<br>
+	 * Merge the two property files.<br>
 	 * This method is not throws the {@link ResourceNotFoundException}. When
 	 * file not found, then always returns the empty properties.
 	 * 
@@ -91,10 +91,10 @@ public abstract class PropertyUtils {
 	 *            default properties.
 	 * @param addFile
 	 *            add or override the properties.
-	 * @return marged properties
+	 * @return merged properties
 	 * @since 0.7
 	 */
-	public static Properties marge(String defaultFile, String addFile, ClassLoader loader) {
+	public static Properties merge(String defaultFile, String addFile, ClassLoader loader) {
 		Properties props = null;
 		// Get the default properties.
 		try {

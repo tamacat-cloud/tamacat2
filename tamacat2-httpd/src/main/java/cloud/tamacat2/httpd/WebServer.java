@@ -39,7 +39,9 @@ import org.slf4j.LoggerFactory;
 import cloud.tamacat2.httpd.config.HttpConfig;
 import cloud.tamacat2.httpd.config.HttpsConfig;
 import cloud.tamacat2.httpd.config.UrlConfig;
-import cloud.tamacat2.httpd.ssl.SSLSNIContextCreator;
+import cloud.tamacat2.httpd.filter.TraceExceptionListener;
+import cloud.tamacat2.httpd.filter.TraceHttp1StreamListener;
+import cloud.tamacat2.httpd.ssl.SSLContextCreator;
 import cloud.tamacat2.httpd.util.StringUtils;
 import cloud.tamacat2.httpd.web.GzipContentEncodingInterceptor;
 import cloud.tamacat2.httpd.web.WebServerHandler;
@@ -81,7 +83,7 @@ public class WebServer {
 		
 		final ServerBootstrap bootstrap = ServerBootstrap.bootstrap()
 				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
-				//.setCanonicalHostName(config.getHost())
+				.setCanonicalHostName(config.getServerName())
 				.setListenerPort(config.getPort())
 				//.setStreamListener(new TraceHttp1StreamListener("client<-httpd"))
 				//.setSocketConfig(SocketConfig.custom()
@@ -93,7 +95,7 @@ public class WebServer {
 		// HTTPS
 		if (config.useHttps()) {
 			final HttpsConfig https = config.getHttpsConfig();
-			final SSLContext sslContext = new SSLSNIContextCreator(https).getSSLContext();
+			final SSLContext sslContext = new SSLContextCreator(https).getSSLContext();
 			bootstrap.setSslSetupHandler(sslParameters -> {
 				sslParameters.setProtocols(TLS.excludeWeak(sslParameters.getProtocols()));
 				sslParameters.setCipherSuites(TlsCiphers.excludeWeak(sslParameters.getCipherSuites()));
@@ -105,8 +107,7 @@ public class WebServer {
 		}
 
 		for (UrlConfig urlConfig : configs) {
-			urlConfig.setHttpConfig(config);
-			register(urlConfig, bootstrap);
+			register(urlConfig.httpConfig(config), bootstrap);
 
 //			// add filters
 //			urlConfig.getFilters().forEach((id, filter) -> {
@@ -131,8 +132,9 @@ public class WebServer {
 		httpResponseInterceptors.forEach(i-> httpProcessorBuilder.add(i));
 		
 		bootstrap.setHttpProcessor(httpProcessorBuilder.build());
-		//bootstrap.setStreamListener(new TraceHttp1StreamListener())
-		//		 .setExceptionListener(new TraceExceptionListener());
+		bootstrap.setStreamListener(new TraceHttp1StreamListener())
+				 .setExceptionListener(new TraceExceptionListener());
+
 		final HttpServer server = bootstrap.create();
 		return server;
 	}
@@ -141,12 +143,17 @@ public class WebServer {
 		registerWebServer(urlConfig, bootstrap);
 	}
 
+	protected void registerWebServer(final UrlConfig urlConfig, final ServerBootstrap bootstrap) {
+		register(urlConfig, bootstrap, new WebServerHandler(urlConfig));
+	}
+
 	protected void register(final UrlConfig urlConfig, final ServerBootstrap bootstrap, final HttpRequestHandler handler) {
 		try {
-			LOG.info("hostname="+urlConfig.getHostname());
 			if (StringUtils.isNotEmpty(urlConfig.getHostname())) {
+				LOG.info("register: VirtualHost="+getVirtualHost(urlConfig)+", path="+urlConfig.getPath() +"* WebServer");
 				bootstrap.registerVirtual(urlConfig.getHostname(), urlConfig.getPath() + "*", handler);
 			} else {
+				LOG.info("register: path="+urlConfig.getPath() +"* WebServer");
 				bootstrap.register(urlConfig.getPath() + "*", handler);
 			}
 		} catch (Exception e) {
@@ -155,11 +162,6 @@ public class WebServer {
 		}
 	}
 	
-	protected void registerWebServer(final UrlConfig urlConfig, final ServerBootstrap bootstrap) {
-		LOG.info("register: VirtualHost="+getVirtualHost(urlConfig)+", path="+urlConfig.getPath() +"* WebServer");
-		register(urlConfig, bootstrap, new WebServerHandler(urlConfig));
-	}
-
 	protected String getVirtualHost(final UrlConfig serviceConfig) {
 		return StringUtils.isNotEmpty(serviceConfig.getHostname()) ? serviceConfig.getHostname() : "default";
 	}

@@ -39,10 +39,6 @@ public class UrlConfig {
 		return new UrlConfig();
 	}
 	
-	public void setHttpConfig(final HttpConfig httpConfig) {
-		this.httpConfig = httpConfig;
-	}
-	
 	public UrlConfig httpConfig(final HttpConfig httpConfig) {
 		this.httpConfig = httpConfig;
 		return this;
@@ -63,17 +59,13 @@ public class UrlConfig {
 			return null;
 		}
 	}
-
-	public void setHost(final String host) {
-		this.host = host;
-	}
 	
 	/**
 	 * Configure Virtual Host
 	 * @param host
 	 */
 	public UrlConfig host(final String host) {
-		setHost(host);
+		this.host = host;
 		return this;
 	}
 	

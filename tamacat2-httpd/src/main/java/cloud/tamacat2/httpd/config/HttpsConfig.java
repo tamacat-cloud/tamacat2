@@ -41,10 +41,6 @@ public class HttpsConfig {
 		return this;
 	}
 	
-	public void setKeyStoreFile(final String keyStoreFile) {
-		this.keyStoreFile = keyStoreFile;
-	}
-	
 	public String getKeyPassword() {
 		return keyPassword;
 	}
@@ -54,72 +50,76 @@ public class HttpsConfig {
 		return this;
 	}
 	
-	public void setKeyPassword(final String keyPassword) {
-		this.keyPassword = keyPassword;
-	}
-	
 	public String getKeyStoreType() {
 		return keyStoreType;
 	}
 	
-	public void setKeyStoreType(final String keyStoreType) {
+	public HttpsConfig keyStoreType(final String keyStoreType) {
 		this.keyStoreType = keyStoreType;
+		return this;
 	}
 	
 	public String getProtocol() {
 		return protocol;
 	}
 	
-	public void setProtocol(final String protocol) {
+	public HttpsConfig protocol(final String protocol) {
 		this.protocol = protocol;
+		return this;
 	}
 	
 	public String getSupportProtocol() {
 		return supportProtocol;
 	}
 	
-	public void setSupportProtocol(final String supportProtocol) {
+	public HttpsConfig supportProtocol(final String supportProtocol) {
 		this.supportProtocol = supportProtocol;
+		return this;
 	}
 	
 	public String getDefaultAlias() {
 		return defaultAlias;
 	}
 	
-	public void setDefaultAlias(final String defaultAlias) {
+	public HttpsConfig defaultAlias(final String defaultAlias) {
 		this.defaultAlias = defaultAlias;
+		return this;
 	}
 	
 	public boolean useClientAuth() {
 		return clientAuth;
 	}
-
-	public void setClientAuth(final boolean clientAuth) {
+	
+	public HttpsConfig clientAuth(final boolean clientAuth) {
 		this.clientAuth = clientAuth;
+		return this;
 	}
 
 	public String getCaKeyStoreFile() {
 		return caKeyStoreFile;
 	}
 
-	public void setCaKeyStoreFile(final String caKeyStoreFile) {
+	public HttpsConfig caKeyStoreFile(final String caKeyStoreFile) {
 		this.caKeyStoreFile = caKeyStoreFile;
+		return this;
 	}
 	
 	public String getCaKeyPassword() {
 		return caKeyPassword;
 	}
 	
-	public void setCaKeyPassword(final String caKeyPassword) {
+	public HttpsConfig caKeyPassword(final String caKeyPassword) {
 		this.caKeyPassword = caKeyPassword;
+		return this;
 	}
 	
 	public String getCrl() {
 		return crl;
 	}
 	
-	public void setCrl(final String crl) {
+	public HttpsConfig crl(final String crl) {
 		this.crl = crl;
+		return this;
 	}
 
 	@Override
