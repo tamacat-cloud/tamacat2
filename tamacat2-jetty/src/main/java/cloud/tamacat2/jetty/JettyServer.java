@@ -18,8 +18,8 @@ package cloud.tamacat2.jetty;
 import java.io.IOException;
 
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.impl.bootstrap.CustomServerBootstrap;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
-import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.util.TimeValue;
 import org.slf4j.Logger;
@@ -30,6 +30,7 @@ import cloud.tamacat2.httpd.config.UrlConfig;
 import cloud.tamacat2.jetty.config.JettyUrlConfig;
 import cloud.tamacat2.reverse.ReverseProxy;
 import cloud.tamacat2.reverse.ReverseProxyHandler;
+import cloud.tamacat2.reverse.config.ReverseConfig;
 
 /**
  * Embedded Classic I/O Jetty with Reverse Proxy server.
@@ -64,7 +65,7 @@ public class JettyServer extends ReverseProxy {
 	}
 
 	@Override
-	protected void register(final UrlConfig urlConfig, final ServerBootstrap bootstrap) {
+	protected void register(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		if (urlConfig instanceof JettyUrlConfig) {
 			registerJettyEmbedded((JettyUrlConfig)urlConfig, bootstrap);
 		} else {
@@ -72,12 +73,14 @@ public class JettyServer extends ReverseProxy {
 		}
 	}
 	
-	protected void registerJettyEmbedded(final JettyUrlConfig urlConfig, final ServerBootstrap bootstrap) {
+	protected void registerJettyEmbedded(final JettyUrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		try {
 			final JettyDeployment jettyDeploy = new JettyDeployment();
 			jettyDeploy.deploy(urlConfig);
 
-			final HttpHost targetHost = HttpHost.create(urlConfig.getReverse().getTarget().toURI());
+			final HttpHost targetHost = urlConfig.getHttpHost();
+			urlConfig.reverse(ReverseConfig.create().url(targetHost.toURI()+urlConfig.getPath())); //add reverse config to jetty
+			
 			LOG.info("register: VirtualHost="+getVirtualHost(urlConfig)+", path="+urlConfig.getPath() + "* ReverseProxy+JettyEmbedded to " + targetHost);
 			register(urlConfig, bootstrap, new ReverseProxyHandler(targetHost, urlConfig));
 			

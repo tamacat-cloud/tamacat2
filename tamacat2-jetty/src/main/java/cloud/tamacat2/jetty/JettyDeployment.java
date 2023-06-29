@@ -36,9 +36,9 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cloud.tamacat2.httpd.config.UrlConfig;
 import cloud.tamacat2.httpd.util.ServerUtils;
 import cloud.tamacat2.httpd.util.StringUtils;
+import cloud.tamacat2.jetty.config.JettyUrlConfig;
 
 /**
  * Deployment configuration for Jetty Embedded.
@@ -62,13 +62,14 @@ public class JettyDeployment {
 	 * 
 	 * @param serviceUrl
 	 */
-	public void deploy(UrlConfig serviceConfig) {
+	public void deploy(JettyUrlConfig jettyUrlConfig) {
 		setWebapps(webapps);
-		LOG.debug("port=" + port + ", config=" + serviceConfig);
+		setPort(jettyUrlConfig.getPort());
+		LOG.debug("port=" + port + ", config=" + jettyUrlConfig);
 		server = JettyManager.getInstance().getServer(hostname, port);
 
 		try {
-			String contextRoot = serviceConfig.getPath().replaceAll("/$", "");
+			String contextRoot = jettyUrlConfig.getPath().replaceAll("/$", "");
 			if (StringUtils.isNotEmpty(contextPath)) {
 				contextRoot = contextPath;
 			}

@@ -16,7 +16,7 @@
 package cloud.tamacat2.reverse;
 
 import org.apache.hc.core5.http.HttpHost;
-import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.CustomServerBootstrap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +29,14 @@ public class ReverseProxy extends WebServer {
 
     static final Logger LOG = LoggerFactory.getLogger(ReverseProxy.class);
 	
-	protected void register(final UrlConfig urlConfig, final ServerBootstrap bootstrap) {
+	protected void register(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		if (urlConfig instanceof ReverseUrlConfig) {
 			registerReverseProxy((ReverseUrlConfig)urlConfig, bootstrap);
 		} else {
 			registerWebServer(urlConfig, bootstrap);
 		}
 	}
-	protected void registerReverseProxy(final ReverseUrlConfig urlConfig, final ServerBootstrap bootstrap) {
+	protected void registerReverseProxy(final ReverseUrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		try {
 			final HttpHost targetHost = HttpHost.create(urlConfig.getReverse().getTarget().toURI());
 			LOG.info("register: VirtualHost="+getVirtualHost(urlConfig)+", path="+urlConfig.getPath()+"* ReverseProxy to "+targetHost);

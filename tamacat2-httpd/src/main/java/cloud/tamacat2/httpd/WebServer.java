@@ -25,8 +25,8 @@ import javax.net.ssl.SSLContext;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.HttpResponseInterceptor;
 import org.apache.hc.core5.http.impl.HttpProcessors;
+import org.apache.hc.core5.http.impl.bootstrap.CustomServerBootstrap;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
-import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
 import org.apache.hc.core5.http.ssl.TLS;
@@ -81,7 +81,7 @@ public class WebServer {
 	public HttpServer createHttpServer(final HttpConfig config) {
 		final Collection<UrlConfig> configs = config.getUrlConfigs();
 		
-		final ServerBootstrap bootstrap = ServerBootstrap.bootstrap()
+		final CustomServerBootstrap bootstrap = CustomServerBootstrap.bootstrap()
 				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
 				.setCanonicalHostName(config.getServerName())
 				.setListenerPort(config.getPort())
@@ -139,15 +139,15 @@ public class WebServer {
 		return server;
 	}
 	
-	protected void register(final UrlConfig urlConfig, final ServerBootstrap bootstrap) {
+	protected void register(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		registerWebServer(urlConfig, bootstrap);
 	}
 
-	protected void registerWebServer(final UrlConfig urlConfig, final ServerBootstrap bootstrap) {
+	protected void registerWebServer(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		register(urlConfig, bootstrap, new WebServerHandler(urlConfig));
 	}
 
-	protected void register(final UrlConfig urlConfig, final ServerBootstrap bootstrap, final HttpRequestHandler handler) {
+	protected void register(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap, final HttpRequestHandler handler) {
 		try {
 			if (StringUtils.isNotEmpty(urlConfig.getHostname())) {
 				LOG.info("register: VirtualHost="+getVirtualHost(urlConfig)+", path="+urlConfig.getPath() +"* WebServer");
