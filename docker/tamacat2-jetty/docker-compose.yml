@@ -1,0 +1,7 @@
+version: "3.5"
+services:
+  tamacat2-jetty:
+    build: .
+    #image: tamacat/tamacat2:jetty-latest
+    ports:
+      - "8080:8080"

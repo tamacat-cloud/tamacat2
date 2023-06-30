@@ -1,0 +1,13 @@
+version: "3.5"
+services:
+  tamacat2-reverse:
+    build: .
+    #image: tamacat/tamacat2:reverse-latest
+    ports:
+      - "8080:8080"
+    links:
+      - tomcat-examples
+  
+  tomcat-examples:
+    #image: tomcat:9.0
+    build: ./tomcat-examples
