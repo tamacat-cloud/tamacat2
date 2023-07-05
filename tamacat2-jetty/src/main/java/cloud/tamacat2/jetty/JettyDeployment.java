@@ -78,11 +78,18 @@ public class JettyDeployment {
 			File baseDir = new File(getWebapps() + contextRoot);
 			ServletContextHandler context = new WebAppContext(baseDir.getAbsolutePath(), contextRoot);
 			context.setClassLoader(getClassLoader());
-
-			enableEmbeddedJspSupport(context);
+			
+			if (jettyUrlConfig.useErrorHandler()) {
+				context.setErrorHandler(jettyUrlConfig.getErrorHandler());
+			}
+			if (jettyUrlConfig.useJSP()) {
+				enableEmbeddedJspSupport(context);
+			}
 
 			HttpConfiguration httpConfig = new HttpConfiguration();
 			httpConfig.addCustomizer(new ForwardedRequestCustomizer());
+			httpConfig.setSendServerVersion(false);
+			
 			ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(httpConfig));
 			connector.setHost(hostname);
 			connector.setPort(port);
