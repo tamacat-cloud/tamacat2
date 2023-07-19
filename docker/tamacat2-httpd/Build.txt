@@ -1,0 +1,11 @@
+
+Building tamacat2-httpd container image.
+
+# A) Docker build (use lib/*.jar)
+docker build -t tamacat/tamacat2-httpd:latest -f Dockerfile .
+
+# B) Docker multi-stage builds (GitHub source build. It takes a lot of time.)
+docker build -t tamacat/tamacat2-httpd:latest -f Dockerfile --no-cache .
+
+# Docker run
+docker run --rm -it -d -p 8080:8080 -t tamacat/tamacat2-httpd:latest
