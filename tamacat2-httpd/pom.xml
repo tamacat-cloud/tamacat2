@@ -41,14 +41,14 @@
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
             <manifestEntries>
-              <Automatic-Module-Name>cloud.tamacat.httpd</Automatic-Module-Name>
+              <Automatic-Module-Name>cloud.tamacat2.httpd</Automatic-Module-Name>
               <Specification-Title>${project.name}</Specification-Title>
               <Specification-Version>${project.version}</Specification-Version>
-              <Specification-Vendor>tamacat.org</Specification-Vendor>
+              <Specification-Vendor>tamacat.cloud</Specification-Vendor>
               <Implementation-Title>${project.name}</Implementation-Title>
               <Implementation-Version>${project.version}</Implementation-Version>
-              <Implementation-Vendor>tamacat.org</Implementation-Vendor>
-              <Implementation-Vendor-Id>org.tamacat</Implementation-Vendor-Id>
+              <Implementation-Vendor>tamacat.cloud</Implementation-Vendor>
+              <Implementation-Vendor-Id>cloud.tamacat</Implementation-Vendor-Id>
               <Built-By>tamacat.org</Built-By>
               <Built-Time>${maven.build.timestamp}</Built-Time>
             </manifestEntries>
@@ -89,7 +89,7 @@
             <image>gcr.io/distroless/java17</image>
           </from>
           <to>
-            <image>tamacat/tamacat-httpd</image>
+            <image>tamacat/tamacat2-httpd</image>
             <tags>
               <tag>2.0-${jib.build.tag}</tag>
               <tag>2.0-latest</tag>
@@ -97,15 +97,17 @@
           </to>
           <container>
             <jvmFlags>
-              <jvmFlag>-Dserver.home=/usr/local/tamacat-httpd</jvmFlag>
+              <jvmFlag>-Dserver.home=/usr/local/tamacat2</jvmFlag>
             </jvmFlags>
             <mainClass>cloud.tamacat2.httpd.WebServer</mainClass>
-            <appRoot>/usr/local/tamacat-httpd</appRoot>
+            <appRoot>/usr/local/tamacat2</appRoot>
+            <!--
             <args>
               <arg>service.json</arg>
             </args>
-            <extraClasspath>/usr/local/tamacat-httpd/conf</extraClasspath>
-            <workingDirectory>/usr/local/tamacat-httpd</workingDirectory>
+            -->
+            <extraClasspath>/usr/local/tamacat2/conf</extraClasspath>
+            <workingDirectory>/usr/local/tamacat2</workingDirectory>
             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
             <ports>
               <port>80</port>
@@ -116,11 +118,11 @@
             <paths>
               <path>
                 <from>src/main/jib/conf</from>
-                <into>/usr/local/tamacat-httpd/conf</into>
+                <into>/usr/local/tamacat2/conf</into>
               </path>
               <path>
                 <from>src/main/jib/htdocs</from>
-                <into>/usr/local/tamacat-httpd/htdocs</into>
+                <into>/usr/local/tamacat2/htdocs</into>
               </path>
             </paths>
           </extraDirectories>
