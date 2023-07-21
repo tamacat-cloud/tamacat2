@@ -1,0 +1,8 @@
+Automatic-Module-Name: cloud.tamacat2.tomcat
+Implementation-Title: tamacat2-tomcat
+Implementation-Version: 2.0-20230721
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: cloud.tamacat2.tomcat
+Bundle-Name: tamacat2-tomcat
+Bundle-Vendor: TAMACAT.ORG
+Bundle-Version: 2.0

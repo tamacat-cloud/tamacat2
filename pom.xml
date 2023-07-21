@@ -20,6 +20,7 @@
     <module>tamacat2-httpd</module>
     <module>tamacat2-reverse</module>
     <module>tamacat2-jetty</module>
+    <module>tamacat2-tomcat</module>
   </modules>
 
   <scm>

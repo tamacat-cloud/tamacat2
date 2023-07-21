@@ -11,6 +11,8 @@ target
 .factorypath
 bin
 
+wark
+
 logs
 *.log
 

@@ -7,9 +7,9 @@
     <groupId>cloud.tamacat2</groupId>
     <version>2.0-SNAPSHOT</version>
   </parent>
-  <artifactId>tamacat2-jetty</artifactId>
+  <artifactId>tamacat2-tomcat</artifactId>
   <packaging>jar</packaging>
-  <name>tamacat2-jetty</name>
+  <name>tamacat2-tomcat</name>
   <url>https://tamacat.cloud/</url>
   <licenses>
     <license>
@@ -20,7 +20,7 @@
   </licenses>
 
   <properties>
-    <jetty.version>[11.0.15,11.1.0.0)</jetty.version>
+    <tomcat.version>9.0.78</tomcat.version>
   </properties>
 
   <dependencies>
@@ -31,24 +31,14 @@
     </dependency>
     
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-      <version>${jetty.version}</version>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>${tomcat.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-webapp</artifactId>
-      <version>${jetty.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlets</artifactId>
-      <version>${jetty.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>apache-jsp</artifactId>
-      <version>${jetty.version}</version>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <version>${tomcat.version}</version>
     </dependency>
   </dependencies>
 
@@ -62,14 +52,14 @@
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
             <manifestEntries>
-              <Automatic-Module-Name>cloud.tamacat.httpd</Automatic-Module-Name>
+              <Automatic-Module-Name>cloud.tamacat2.tomcat</Automatic-Module-Name>
               <Specification-Title>${project.name}</Specification-Title>
               <Specification-Version>${project.version}</Specification-Version>
-              <Specification-Vendor>tamacat.org</Specification-Vendor>
+              <Specification-Vendor>tamacat.cloud</Specification-Vendor>
               <Implementation-Title>${project.name}</Implementation-Title>
               <Implementation-Version>${project.version}</Implementation-Version>
-              <Implementation-Vendor>tamacat.org</Implementation-Vendor>
-              <Implementation-Vendor-Id>org.tamacat</Implementation-Vendor-Id>
+              <Implementation-Vendor>tamacat.cloud</Implementation-Vendor>
+              <Implementation-Vendor-Id>cloud.tamacat</Implementation-Vendor-Id>
               <Built-By>tamacat.org</Built-By>
               <Built-Time>${maven.build.timestamp}</Built-Time>
             </manifestEntries>
@@ -81,13 +71,13 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.5.0</version>
         <configuration>
-          <finalName>tamacat2-jetty-${project.version}</finalName>
+          <finalName>tamacat2-tc${tomcat.version}-${project.version}</finalName>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>cloud.tamacat2.jetty.JerryServer</mainClass>
+              <mainClass>cloud.tamacat2.tomcat.TomcatServer</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -110,23 +100,25 @@
             <image>gcr.io/distroless/java17</image>
           </from>
           <to>
-            <image>tamacat/tamacat-httpd</image>
+            <image>tamacat/tamacat2-tomcat</image>
             <tags>
-              <tag>2.0-jetty-${jib.build.tag}</tag>
-              <tag>2.0-jetty-latest</tag>
+              <tag>2.0-tc${tomcat.version}-${jib.build.tag}</tag>
+              <tag>2.0-tc-latest</tag>
             </tags>
           </to>
           <container>
             <jvmFlags>
-              <jvmFlag>-Dserver.home=/usr/local/tamacat-httpd</jvmFlag>
+              <jvmFlag>-Dserver.home=/usr/local/tamacat2</jvmFlag>
             </jvmFlags>
-            <mainClass>cloud.tamacat.httpd.jetty.HttpdWithJetty</mainClass>
-            <appRoot>/usr/local/tamacat-httpd</appRoot>
+            <mainClass>cloud.tamacat2.tomcat.TomcatServer</mainClass>
+            <appRoot>/usr/local/tamacat2</appRoot>
+            <!--
             <args>
               <arg>service.json</arg>
             </args>
-            <extraClasspath>/usr/local/tamacat-httpd/conf</extraClasspath>
-            <workingDirectory>/usr/local/tamacat-httpd</workingDirectory>
+            -->
+            <extraClasspath>/usr/local/tamacat2/conf</extraClasspath>
+            <workingDirectory>/usr/local/tamacat2</workingDirectory>
             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
             <ports>
               <port>80</port>
@@ -137,15 +129,15 @@
             <paths>
               <path>
                 <from>src/main/jib/conf</from>
-                <into>/usr/local/tamacat-httpd/conf</into>
+                <into>/usr/local/tamacat2/conf</into>
               </path>
               <path>
                 <from>src/main/jib/htdocs</from>
-                <into>/usr/local/tamacat-httpd/htdocs</into>
+                <into>/usr/local/tamacat2/htdocs</into>
               </path>
               <path>
                 <from>src/main/jib/webapps</from>
-                <into>/usr/local/tamacat-httpd/webapps</into>
+                <into>/usr/local/tamacat2/webapps</into>
               </path>
             </paths>
           </extraDirectories>
