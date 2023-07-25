@@ -278,7 +278,7 @@ public class RequestUtils {
 	}
 
 	/**
-	 * Get a X-ForwardedFor value. (original)
+	 * Get a X-Forwarded-For value. (original)
 	 * @param request
 	 * @param forwardHeader
 	 * @since 1.5-20230629
@@ -288,7 +288,7 @@ public class RequestUtils {
 	}
 
 	/**
-	 * Get a X-ForwardedFor first value.
+	 * Get a X-Forwarded-For first value.
 	 * @param request
 	 * @param forwardHeader
 	 * @since 1.5-20230629
@@ -305,7 +305,7 @@ public class RequestUtils {
 	}
 	
 	/**
-	 * Get a X-ForwardedFor last value.
+	 * Get a X-Forwarded-For last value.
 	 * @param request
 	 * @param forwardHeader
 	 * @since 1.5-20230629

@@ -17,12 +17,14 @@
 import cloud.tamacat2.httpd.WebServer;
 import cloud.tamacat2.httpd.config.HttpConfig;
 import cloud.tamacat2.httpd.config.UrlConfig;
+import cloud.tamacat2.httpd.filter.ClientIPAccessControlFilter;
 
-public class WebServerExamples {
+public class WebServerClientIPAccessControlFilterExamples {
 	public static void main(String[] args) {
 		new WebServer().startup(HttpConfig.create().port(8080)
 			.urlConfig(UrlConfig.create().path("/examples/")
 				.docsRoot("${server.home}/htdocs/")
+				.filter(new ClientIPAccessControlFilter().allow("127.0.0.1"))
 			)
 			.contentEncoding("gzip")
 		);

@@ -18,13 +18,23 @@ import cloud.tamacat2.httpd.util.StringUtils;
 
 public class ClientIPAccessControlFilter extends HttpFilter {
 	
-	private List<IpAddressMatcher> allowMatchers = new ArrayList<>();
-	private List<IpAddressMatcher> denyMatchers = new ArrayList<>();
+	private final List<IpAddressMatcher> allowMatchers = new ArrayList<>();
+	private final List<IpAddressMatcher> denyMatchers = new ArrayList<>();
 
 	protected UrlConfig urlConfig;
 
 	protected boolean useForwardHeader;
 	protected String forwardHeader = "X-Forwarded-For";
+	
+	public ClientIPAccessControlFilter allow(final String address) {
+		setPattern(address, true);
+		return this;
+	}
+	
+	public ClientIPAccessControlFilter deny(final String address) {
+		setPattern(address, false);
+		return this;
+	}
 	
 	public void setUseForwardHeader(final boolean forwardHeader) {
 		this.useForwardHeader = forwardHeader;
@@ -55,14 +65,6 @@ public class ClientIPAccessControlFilter extends HttpFilter {
 				}
 			}
 		}
-	}
-	
-	public void setAllow(final String address) {
-		setPattern(address, true);
-	}
-	
-	public void setDeny(final String address) {
-		setPattern(address, false);
 	}
 
 	private void setPattern(final String address, final boolean isAllow) {

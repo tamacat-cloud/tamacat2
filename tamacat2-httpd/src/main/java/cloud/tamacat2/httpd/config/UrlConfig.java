@@ -17,10 +17,13 @@ package cloud.tamacat2.httpd.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cloud.tamacat2.httpd.filter.HttpFilter;
 import cloud.tamacat2.httpd.util.ServerUtils;
 import cloud.tamacat2.httpd.util.StringUtils;
 
@@ -35,6 +38,8 @@ public class UrlConfig {
 	protected HttpConfig httpConfig;
 	protected String serverHome;
 
+	final protected Collection<HttpFilter> httpFilters = new ArrayList<>();
+	
 	public static UrlConfig create() {
 		return new UrlConfig();
 	}
@@ -109,5 +114,14 @@ public class UrlConfig {
 			serverHome = ServerUtils.getServerHome();
 		}
 		return serverHome;
+	}
+	
+	public Collection<HttpFilter> getHttpFilters() {
+		return httpFilters;
+	}
+	
+	public UrlConfig filter(HttpFilter filter) {
+		httpFilters.add(filter);
+		return this;
 	}
 }

@@ -54,9 +54,9 @@ public class WebServer {
 		Locale.setDefault(Locale.US);
 	}
 
-	protected Collection<HttpRequestInterceptor> httpRequestInterceptors = new ArrayList<>();
-	protected Collection<HttpResponseInterceptor> httpResponseInterceptors = new ArrayList<>();
-	
+	protected final Collection<HttpRequestInterceptor> httpRequestInterceptors = new ArrayList<>();
+	protected final Collection<HttpResponseInterceptor> httpResponseInterceptors = new ArrayList<>();
+
 	public void startup(final HttpConfig config) {
 		final int port = config.getPort();
 		final HttpServer server = createHttpServer(config);
@@ -108,17 +108,12 @@ public class WebServer {
 
 		for (UrlConfig urlConfig : configs) {
 			register(urlConfig.httpConfig(config), bootstrap);
-
-//			// add filters
-//			urlConfig.getFilters().forEach((id, filter) -> {
-//				bootstrap.addFilterFirst(id, filter.getFilter(serviceConfig));
-//			});
-//			
-//			//add HttpFilters
-//			urlConfig.getHttpFilters().forEach((filter) -> {
-//				filter.serverConfig(serviceConfig);
-//				bootstrap.addFilterFirst(filter.toString(), filter);
-//			});
+			
+			//add HttpFilters
+			urlConfig.getHttpFilters().forEach((filter) -> {
+				filter.setUrlConfig(urlConfig);
+				bootstrap.addFilterFirst(filter.toString(), filter);
+			});
 		}
 		
 		//support Content-Encoding: gzip

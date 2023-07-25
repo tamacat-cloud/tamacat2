@@ -33,9 +33,9 @@ public class TraceExceptionListener implements ExceptionListener {
 	@Override
     public void onError(final Exception ex) {
         if (ex instanceof SocketException) {
-            LOG.debug("[client->proxy] " + Thread.currentThread() + " " + ex.getMessage());
+            LOG.debug("[client->httpd] " + Thread.currentThread() + " " + ex.getMessage());
         } else {
-        	LOG.debug("[client->proxy] " + Thread.currentThread()  + " " + ex.getMessage());
+        	LOG.debug("[client->httpd] " + Thread.currentThread()  + " " + ex.getMessage());
         	LOG.debug(ExceptionUtils.getStackTrace(ex));
         }
     }
@@ -43,11 +43,11 @@ public class TraceExceptionListener implements ExceptionListener {
     @Override
     public void onError(final HttpConnection connection, final Exception ex) {
         if (ex instanceof SocketTimeoutException) {
-        	LOG.debug("[client->proxy] " + Thread.currentThread() + " time out");
+        	LOG.debug("[client->httpd] " + Thread.currentThread() + " time out");
         } else if (ex instanceof SocketException || ex instanceof ConnectionClosedException) {
-        	LOG.debug("[client->proxy] " + Thread.currentThread() + " " + ex.getMessage());
+        	LOG.debug("[client->httpd] " + Thread.currentThread() + " " + ex.getMessage());
         } else {
-        	LOG.debug("[client->proxy] " + Thread.currentThread() + " " + ex.getMessage());
+        	LOG.debug("[client->httpd] " + Thread.currentThread() + " " + ex.getMessage());
             LOG.debug(ExceptionUtils.getStackTrace(ex));
         }
     }
