@@ -15,17 +15,12 @@
  */
 package cloud.tamacat2.tomcat;
 
-import java.io.IOException;
-
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.impl.bootstrap.CustomServerBootstrap;
-import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
-import org.apache.hc.core5.io.CloseMode;
-import org.apache.hc.core5.util.TimeValue;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cloud.tamacat2.httpd.config.HttpConfig;
 import cloud.tamacat2.httpd.config.UrlConfig;
 import cloud.tamacat2.reverse.ReverseProxy;
 import cloud.tamacat2.reverse.ReverseProxyHandler;
@@ -39,29 +34,8 @@ public class TomcatServer extends ReverseProxy {
 
 	static final Logger LOG = LoggerFactory.getLogger(TomcatServer.class);
 	
-	@Override
-	public void startup(final HttpConfig config) {
-		final int port = config.getPort();
-
-		final HttpServer server = createHttpServer(config);
-		TomcatManager.getInstance().start();
-		
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				TomcatManager.getInstance().stop();
-				LOG.info(config.getServerName() + ":" + port + " shutting down");
-				server.close(CloseMode.GRACEFUL);
-			}
-		});
-
-		try {
-			server.start();
-			LOG.info("Listening on port " + port);
-			server.awaitTermination(TimeValue.MAX_VALUE);
-		} catch (IOException | InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+	public TomcatServer() {
+		addPluginServer(TomcatManager.getInstance());
 	}
 
 	@Override

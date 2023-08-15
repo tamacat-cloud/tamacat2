@@ -41,6 +41,7 @@ import cloud.tamacat2.httpd.config.HttpsConfig;
 import cloud.tamacat2.httpd.config.UrlConfig;
 import cloud.tamacat2.httpd.filter.TraceExceptionListener;
 import cloud.tamacat2.httpd.filter.TraceHttp1StreamListener;
+import cloud.tamacat2.httpd.plugin.PluginServer;
 import cloud.tamacat2.httpd.ssl.SSLContextCreator;
 import cloud.tamacat2.httpd.util.StringUtils;
 import cloud.tamacat2.httpd.web.GzipContentEncodingInterceptor;
@@ -57,10 +58,14 @@ public class WebServer {
 	protected final Collection<HttpRequestInterceptor> httpRequestInterceptors = new ArrayList<>();
 	protected final Collection<HttpResponseInterceptor> httpResponseInterceptors = new ArrayList<>();
 
+	protected Collection<PluginServer> pluginServers = new ArrayList<>();
+	
 	public void startup(final HttpConfig config) {
 		final int port = config.getPort();
 		final HttpServer server = createHttpServer(config);
 
+		startPluginServers();
+		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
@@ -75,6 +80,16 @@ public class WebServer {
 			server.awaitTermination(TimeValue.MAX_VALUE);
 		} catch (IOException | InterruptedException e) {
 			throw new RuntimeException(e);
+		}
+	}
+	
+	public void addPluginServer(PluginServer pluginServer) {
+		pluginServers.add(pluginServer);
+	}
+	
+	protected void startPluginServers() {
+		for (PluginServer plugin : pluginServers) {
+			plugin.start();
 		}
 	}
 	

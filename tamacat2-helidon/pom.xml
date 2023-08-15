@@ -7,9 +7,9 @@
     <groupId>cloud.tamacat2</groupId>
     <version>2.0-SNAPSHOT</version>
   </parent>
-  <artifactId>tamacat2-tomcat</artifactId>
+  <artifactId>tamacat2-helidon</artifactId>
   <packaging>jar</packaging>
-  <name>tamacat2-tomcat</name>
+  <name>tamacat2-helidon</name>
   <url>https://tamacat.cloud/</url>
   <licenses>
     <license>
@@ -20,9 +20,9 @@
   </licenses>
 
   <properties>
-    <tomcat.version>9.0.79</tomcat.version>
+    <helidon-microprofile.version>3.2.2</helidon-microprofile.version>
   </properties>
-
+  
   <dependencies>
     <dependency>
       <groupId>cloud.tamacat2</groupId>
@@ -31,17 +31,12 @@
     </dependency>
     
     <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-core</artifactId>
-      <version>${tomcat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-jasper</artifactId>
-      <version>${tomcat.version}</version>
+      <groupId>io.helidon.microprofile.server</groupId>
+      <artifactId>helidon-microprofile-server</artifactId>
+      <version>${helidon-microprofile.version}</version>
     </dependency>
   </dependencies>
-
+  
   <build>
     <plugins>
       <plugin>
@@ -52,7 +47,7 @@
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
             <manifestEntries>
-              <Automatic-Module-Name>cloud.tamacat2.tomcat</Automatic-Module-Name>
+              <Automatic-Module-Name>cloud.tamacat2.helidon</Automatic-Module-Name>
               <Specification-Title>${project.name}</Specification-Title>
               <Specification-Version>${project.version}</Specification-Version>
               <Specification-Vendor>tamacat.cloud</Specification-Vendor>
@@ -71,13 +66,13 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.5.0</version>
         <configuration>
-          <finalName>tamacat2-tc${tomcat.version}-${project.version}</finalName>
+          <finalName>tamacat2-httpd-${project.version}</finalName>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>cloud.tamacat2.tomcat.TomcatServer</mainClass>
+              <mainClass>cloud.tamacat2.httpd.WevServer</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -100,17 +95,17 @@
             <image>gcr.io/distroless/java17</image>
           </from>
           <to>
-            <image>tamacat/tamacat2-tomcat</image>
+            <image>tamacat/tamacat2-httpd</image>
             <tags>
-              <tag>2.0-tc${tomcat.version}-${jib.build.tag}</tag>
-              <tag>2.0-tc-latest</tag>
+              <tag>2.0-${jib.build.tag}</tag>
+              <tag>2.0-latest</tag>
             </tags>
           </to>
           <container>
             <jvmFlags>
               <jvmFlag>-Dserver.home=/usr/local/tamacat2</jvmFlag>
             </jvmFlags>
-            <mainClass>cloud.tamacat2.tomcat.TomcatServer</mainClass>
+            <mainClass>cloud.tamacat2.httpd.WebServer</mainClass>
             <appRoot>/usr/local/tamacat2</appRoot>
             <!--
             <args>
@@ -134,10 +129,6 @@
               <path>
                 <from>src/main/jib/htdocs</from>
                 <into>/usr/local/tamacat2/htdocs</into>
-              </path>
-              <path>
-                <from>src/main/jib/webapps</from>
-                <into>/usr/local/tamacat2/webapps</into>
               </path>
             </paths>
           </extraDirectories>

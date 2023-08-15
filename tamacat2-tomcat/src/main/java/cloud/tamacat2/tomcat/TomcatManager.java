@@ -22,9 +22,10 @@ import org.apache.catalina.startup.Tomcat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cloud.tamacat2.httpd.plugin.PluginServer;
 import cloud.tamacat2.httpd.util.StringUtils;
 
-public class TomcatManager {
+public class TomcatManager implements PluginServer {
 
 	static final Logger LOG = LoggerFactory.getLogger(TomcatManager.class);
 	

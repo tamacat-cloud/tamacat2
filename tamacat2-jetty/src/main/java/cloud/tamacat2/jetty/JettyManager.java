@@ -23,9 +23,10 @@ import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cloud.tamacat2.httpd.plugin.PluginServer;
 import cloud.tamacat2.httpd.util.StringUtils;
 
-public class JettyManager /* implements Middleware */ {
+public class JettyManager implements PluginServer {
 
 	static final Logger LOG = LoggerFactory.getLogger(JettyManager.class);
 	

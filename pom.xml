@@ -21,6 +21,7 @@
     <module>tamacat2-reverse</module>
     <module>tamacat2-jetty</module>
     <module>tamacat2-tomcat</module>
+    <module>tamacat2-helidon</module>
   </modules>
 
   <scm>
@@ -52,12 +53,12 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.4.8</version>
+      <version>1.4.11</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.4.8</version>
+      <version>1.4.11</version>
     </dependency>
 
     <dependency>
