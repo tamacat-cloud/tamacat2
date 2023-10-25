@@ -4,7 +4,7 @@
 ## Features:
 - Customizable Reverse Proxy.
 - Dependencies: Apache HttpComponents httpcore5, SLF4J+Logback
-- Required Java 17+ (JRE/JDK)
+- Required Java 21+ (JRE/JDK)
 
 ## Getting Started:
 
@@ -28,7 +28,7 @@
   ```
 
 ### Execute:
-- ex. Java17+ / ReverseProxyExamples.java
+- ex. Java21+ / ReverseProxyExamples.java
   ```
   java -cp tamacat2-reverse-2.0-SNAPSHOT-jar-with-dependencies.jar ReverseProxyExamples.java
   ```

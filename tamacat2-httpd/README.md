@@ -4,7 +4,7 @@
 ## Features:
 - Standard HTTP/HTTPS Web Server.
 - Dependencies: Apache HttpComponents httpcore5, SLF4J+Logback
-- Required Java 17+ (JRE/JDK)
+- Required Java 21+ (JRE/JDK)
 
 ## Getting Started:
 
@@ -32,7 +32,7 @@
 
 
 ### Execute:
-- ex. Java17+ / WebServerExamples.java
+- ex. Java21+ / WebServerExamples.java
   ```
   java -cp tamacat2-httpd-2.0-SNAPSHOT-jar-with-dependencies.jar WebServerExamples.java
   ```

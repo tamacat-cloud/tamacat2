@@ -4,7 +4,7 @@
 ## Features:
 - Support Embedded Jetty11 Servlet/JSP
   - https://www.eclipse.org/jetty/
-- Required Java 17+ (JRE/JDK)
+- Required Java 21+ (JRE/JDK)
 
 ## Getting Started:
 
@@ -40,7 +40,7 @@
   ```
 
 ### Execute
-- ex. Java17+ / JettyExamples.java
+- ex. Java21+ / JettyExamples.java
   ```
   java -cp tamacat2-jetty-2.0-SNAPSHOT-jar-with-dependencies.jar JettyExamples.java
   ```
