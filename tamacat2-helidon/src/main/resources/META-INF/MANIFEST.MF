@@ -1,6 +1,6 @@
-Automatic-Module-Name: cloud.tamacat2.mp
+Automatic-Module-Name: tamacat2.helidon
 Implementation-Title: tamacat2-helidon
-Implementation-Version: 2.0-20230815
+Implementation-Version: 2.0-20231025
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: cloud.tamacat2.mp
 Bundle-Name: tamacat2-helidon

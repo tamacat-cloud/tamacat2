@@ -15,7 +15,7 @@
  */
 package cloud.tamacat2.httpd.ssl;
 
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.cert.CRL;
@@ -284,8 +284,8 @@ public class SSLContextCreator {
 		}
 		if (crlFile.startsWith("http://") || crlFile.startsWith("https://")) {
 			try {
-				return new URL(crlFile);
-			} catch (MalformedURLException e) {
+				return new URI(crlFile).toURL();
+			} catch (Exception e) {
 				throw new IllegalArgumentException("https.CRL ["+crlFile+"] file not found.", e);
 			}
 		} else {

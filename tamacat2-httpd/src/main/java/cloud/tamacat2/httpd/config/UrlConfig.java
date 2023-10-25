@@ -15,7 +15,7 @@
  */
 package cloud.tamacat2.httpd.config;
 
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,8 +59,8 @@ public class UrlConfig {
 	
 	public URL getHost() {
 		try {
-			return new URL(host);
-		} catch (MalformedURLException e) {
+			return new URI(host).toURL();
+		} catch (Exception e) {
 			return null;
 		}
 	}

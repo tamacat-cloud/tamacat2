@@ -20,7 +20,7 @@
   </licenses>
 
   <properties>
-    <httpcomponents.core5.version>5.2.2</httpcomponents.core5.version>
+    <httpcomponents.core5.version>5.2.3</httpcomponents.core5.version>
   </properties>
   
   <dependencies>

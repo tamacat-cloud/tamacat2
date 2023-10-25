@@ -140,24 +140,24 @@ public class RequestUtilsTest {
 	
 	@Test
 	public void testGetRequestHost() throws Exception {
-		HttpRequest request = new BasicHttpRequest("GET", "/test.html");
+		HttpRequest request = new BasicHttpRequest("GET", "/test.html?test=true");
 
 		URL url = RequestUtils.getRequestURL(request, null);
 		assertNull(url);
 
 		request.setHeader(HttpHeaders.HOST, "example.com");
 		url = RequestUtils.getRequestURL(request, null);
-		assertEquals("http://example.com/test.html", url.toString());
+		assertEquals("http://example.com/test.html?test=true", url.toString());
 
 		HttpConfig serverConfig = HttpConfig.create().port(8080);
 		UrlConfig serviceUrl = UrlConfig.create().httpConfig(serverConfig);
 		url = RequestUtils.getRequestURL(request, null, serviceUrl);
-		assertEquals("http://example.com:8080/test.html", url.toString());
+		assertEquals("http://example.com:8080/test.html?test=true", url.toString());
 
 		serverConfig = HttpConfig.create().port(443).https(HttpsConfig.create());
 		serviceUrl = UrlConfig.create().httpConfig(serverConfig);
 		url = RequestUtils.getRequestURL(request, null, serviceUrl);
-		assertEquals("https://example.com/test.html", url.toString());
+		assertEquals("https://example.com/test.html?test=true", url.toString());
 	}
 
 	@Test

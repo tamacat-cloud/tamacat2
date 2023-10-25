@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -405,8 +405,9 @@ public class RequestUtils {
 		}
 		if (hostName != null) {
 			try {
-				return new URL(protocol, hostName, port, request.getPath());
-			} catch (MalformedURLException e) {
+				URI path = new URI(request.getPath());
+				return new URI(protocol, null, hostName, port, path.getPath(), path.getQuery(), path.getFragment()).toURL();
+			} catch (Exception e) {
 			}
 		}
 		return null;

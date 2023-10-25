@@ -21,11 +21,11 @@ import cloud.tamacat2.reverse.config.ReverseConfig;
 public class ReverseProxyExamples {
 	public static void main(String[] args) {
 		new ReverseProxy().startup(HttpConfig.create().port(8080)
-			.urlConfig(ReverseUrlConfig.create().path("/examples1/")
-				.reverse(ReverseConfig.create().url("http://localhost:8081/examples/"))
+			.urlConfig(ReverseUrlConfig.create().path("/examles1/")
+				.reverse(ReverseConfig.create().url("http://localhost:8081/"))
 			)
 			.urlConfig(ReverseUrlConfig.create().path("/examples2/")
-				.reverse(ReverseConfig.create().url("http://localhost:8082/examples/"))
+				.reverse(ReverseConfig.create().url("http://localhost:8082/"))
 			)
 		);
 	}

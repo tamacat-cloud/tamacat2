@@ -95,7 +95,6 @@ public class ReverseProxyHandler implements HttpRequestHandler {
 		final ClassicHttpRequest outgoingRequest = new BasicClassicHttpRequest(
 				incomingRequest.getMethod(), targetHost, reverseTargetPath);
 		outgoingRequest.setVersion(HttpVersion.HTTP_1_1); //force HTTP/1.1
-
 		for (final Iterator<Header> it = incomingRequest.headerIterator(); it.hasNext();) {
 			final Header header = it.next();
 			//Delete End-to-end and Hop-by-hop Headers

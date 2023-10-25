@@ -10,6 +10,7 @@
   <logger name="org.thymeleaf" level="OFF" />
   <logger name="org" level="INFO" />
   <logger name="com" level="INFO" />
+  <logger name="io" level="INFO" />
   <logger name="ch.qos" level="ERROR" />
 
   <root level="WARN">

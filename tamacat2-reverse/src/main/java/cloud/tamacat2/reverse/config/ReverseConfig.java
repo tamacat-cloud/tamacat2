@@ -15,7 +15,7 @@
  */
 package cloud.tamacat2.reverse.config;
 
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import org.apache.hc.core5.http.HttpHost;
@@ -55,10 +55,10 @@ public class ReverseConfig {
 	
 	public void setUrl(String url) {
 		try {
-			URL targetUrl = new URL(url);
+			URL targetUrl = new URI(url).toURL();
 			this.target = new HttpHost(targetUrl.getHost(), targetUrl.getPort());
 			this.url = url;
-		} catch (MalformedURLException e) {
+		} catch (Exception e) {
 			LOG.warn(e.getMessage());
 		}
 	}
@@ -86,8 +86,8 @@ public class ReverseConfig {
 	public void setHost(URL host) {
 		if (host != null) {
 			try {
-				this.host = new URL(host.getProtocol(), host.getHost(), host.getPort(), "");
-			} catch (MalformedURLException e) {
+				this.host = new URI(host.getProtocol(), null, host.getHost(), host.getPort(), "", null, null).toURL();
+			} catch (Exception e) {
 				LOG.warn(e.getMessage());
 			}
 		}
@@ -95,8 +95,8 @@ public class ReverseConfig {
 
 	public URL getReverse() {
 		try {
-			return new URL(url);
-		} catch (MalformedURLException e) {
+			return new URI(url).toURL();
+		} catch (Exception e) {
 			LOG.warn(e.getMessage());
 		}
 		return null;
@@ -112,8 +112,10 @@ public class ReverseConfig {
 				if (port == -1) {
 					port = reverseUrl.getDefaultPort();
 				}
-				return new URL(reverseUrl.getProtocol(), reverseUrl.getHost(), port, distUrl);
-			} catch (MalformedURLException e) {
+				URI dist = new URI(distUrl);
+				return new URI(reverseUrl.getProtocol(), null, reverseUrl.getHost(), port,
+						dist.getPath(), dist.getQuery(), dist.getFragment()).toURL();
+			} catch (Exception e) {
 				LOG.warn(e.getMessage());
 			}
 		}
