@@ -2,7 +2,7 @@
 
 - The tamacat2-reverse is an open source Java Web Server software, powered by "Apache HttpComponents-5.2".
 - This is a customizable HTTP/HTTPS Server / Reverse Proxy.
-- Base image: eclipse-temurin:17-jdk-alpine (OpenJDK 17)
+- Base image: eclipse-temurin:21-jdk-alpine (OpenJDK 21)
 
 ## GitHub
 https://github.com/tamacat-cloud/tamacat2/
