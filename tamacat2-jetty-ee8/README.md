@@ -1,8 +1,8 @@
 # tamacat2-jetty : Reverse Proxy with Jetty
-- The tamacat2-jetty is an open source reverse proxy with embedded Jetty server with Jakarta EE 10.
+- The tamacat2-jetty-ee8 is an open source reverse proxy with embedded Jetty server with Jakarta EE 8.
 
 ## Features:
-- Support Embedded Jetty12 with Jakarta EE 10 (jakarta.servlet.*)
+- Support Embedded Jetty12 +Jakarta EE 8(javax.servlet.*)
   - https://www.eclipse.org/jetty/
 - Required Java 21+ (JRE/JDK)
 
@@ -42,12 +42,12 @@
 ### Execute
 - ex. Java21+ / JettyExamples.java
   ```
-  java -cp tamacat2-jetty-2.0-SNAPSHOT-jar-with-dependencies.jar JettyExamples.java
+  java -cp tamacat2-jetty-ee8-2.0-SNAPSHOT-jar-with-dependencies.jar JettyExamples.java
   ```
   - Browser access to http://localhost/examples/
 
 ## License:
-- The tamacat2-jetty is licensed under the terms of the [Apache License, Version 2.0](https://github.com/tamacat-cloud/tamacat2/blob/main/LICENSE.txt).
+- The tamacat2-jetty-ee8 is licensed under the terms of the [Apache License, Version 2.0](https://github.com/tamacat-cloud/tamacat2/blob/main/LICENSE.txt).
 
 - Bundle Licensing:
   - [Apache HttpComponents HttpCore / Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)

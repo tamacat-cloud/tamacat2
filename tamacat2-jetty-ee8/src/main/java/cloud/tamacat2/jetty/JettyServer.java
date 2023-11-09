@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import cloud.tamacat2.httpd.config.UrlConfig;
 import cloud.tamacat2.jetty.config.JettyUrlConfig;
-import cloud.tamacat2.jetty.ee10.JettyDeploymentEE10;
+import cloud.tamacat2.jetty.ee8.JettyDeploymentEE8;
 import cloud.tamacat2.reverse.ReverseProxy;
 import cloud.tamacat2.reverse.ReverseProxyHandler;
 import cloud.tamacat2.reverse.config.ReverseConfig;
@@ -50,7 +50,7 @@ public class JettyServer extends ReverseProxy {
 	
 	protected void registerJettyEmbedded(final JettyUrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		try {
-			final JettyDeployment jettyDeploy = new JettyDeploymentEE10();
+			final JettyDeployment jettyDeploy = new JettyDeploymentEE8();
 			jettyDeploy.deploy(urlConfig);
 
 			final HttpHost targetHost = urlConfig.getHttpHost();

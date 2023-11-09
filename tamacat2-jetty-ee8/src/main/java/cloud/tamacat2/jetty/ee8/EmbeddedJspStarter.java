@@ -16,12 +16,14 @@
 //  You may elect to redistribute this code under either of these licenses.
 //  ========================================================================
 //
-package cloud.tamacat2.jetty;
+package cloud.tamacat2.jetty.ee8;
+
+import java.util.Set;
 
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 import org.apache.tomcat.util.scan.StandardJarScanner;
-import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
-import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee8.apache.jsp.JettyJasperInitializer;
+import org.eclipse.jetty.ee8.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
 /**
@@ -53,7 +55,7 @@ public class EmbeddedJspStarter extends AbstractLifeCycle {
 		ClassLoader old = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(context.getClassLoader());
 		try {
-			sci.onStartup(null, context.getServletContext());
+			sci.onStartup((Set<Class<?>>)null, context.getServletContext());
 			super.doStart();
 		} finally {
 			Thread.currentThread().setContextClassLoader(old);

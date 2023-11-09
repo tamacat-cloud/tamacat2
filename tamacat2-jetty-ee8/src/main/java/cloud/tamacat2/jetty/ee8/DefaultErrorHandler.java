@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cloud.tamacat2.jetty;
+package cloud.tamacat2.jetty.ee8;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -22,7 +22,7 @@ import org.eclipse.jetty.server.handler.ErrorHandler;
 
 import cloud.tamacat2.httpd.error.ErrorPageTemplate;
 import cloud.tamacat2.httpd.error.HttpStatusExceptionHandler;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 public class DefaultErrorHandler extends ErrorHandler {
 
