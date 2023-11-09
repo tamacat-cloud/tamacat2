@@ -7,9 +7,10 @@
 ## Features:
 - tamacat-httpd: Standard Web Server
 - tamacat2-reverse: Customizable Reverse Proxy
-- tamacat2-jetty: Support Embedded Jetty11 Servlet/JSP
+- tamacat2-jetty: Support Embedded Jetty 12 with Jakarta EE 10 (jakarta.servlet.*)
+- tamacat2-jetty-ee8: Support Embedded Jetty 12 with Jakarta EE 8 (javax.servlet.*)
 - tamacat2-tomcat: Support Embedded Apache Tomcat 9.0 Servlet/JSP
-- tamacat2-helidon: Support Embedded Helidon MicroProfile
+- tamacat2-helidon: Support Embedded Helidon MicroProfile Server
 - Required Java 21+ (JRE/JDK)
 - Dependencies:
   - [Apache HttpComponents HttpCore 5.2](https://hc.apache.org/httpcomponents-core-5.2.x/index.html)
