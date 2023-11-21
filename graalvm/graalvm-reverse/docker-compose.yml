@@ -1,0 +1,7 @@
+version: "3.5"
+services:
+  tamacat2-reverse-graalvm:
+    build: .
+    #image: tamacat/tamacat2:reverse-graalvm-latest
+    ports:
+      - "8080:8080"
