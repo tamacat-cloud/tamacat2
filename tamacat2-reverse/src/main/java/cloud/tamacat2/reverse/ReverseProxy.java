@@ -16,6 +16,8 @@
 package cloud.tamacat2.reverse;
 
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
 import org.apache.hc.core5.http.impl.bootstrap.CustomServerBootstrap;
 
 import org.slf4j.Logger;
@@ -45,5 +47,15 @@ public class ReverseProxy extends WebServer {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
+	}
+	
+	public ReverseProxy addHttpRequestInterceptor(final HttpRequestInterceptor interceptor) {
+		httpRequestInterceptors.add(interceptor);
+		return this;
+	}
+
+	public ReverseProxy addHttpResponseInterceptor(final HttpResponseInterceptor interceptor) {
+		httpResponseInterceptors.add(interceptor);
+		return this;
 	}
 }

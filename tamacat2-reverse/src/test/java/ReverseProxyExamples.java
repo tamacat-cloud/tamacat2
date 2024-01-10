@@ -16,16 +16,19 @@
 import cloud.tamacat2.httpd.config.HttpConfig;
 import cloud.tamacat2.reverse.ReverseProxy;
 import cloud.tamacat2.reverse.config.ReverseUrlConfig;
+import cloud.tamacat2.reverse.filter.HtmlLinkConvertInterceptor;
 import cloud.tamacat2.reverse.config.ReverseConfig;
 
 public class ReverseProxyExamples {
 	public static void main(String[] args) {
-		new ReverseProxy().startup(HttpConfig.create().port(8080)
-			.urlConfig(ReverseUrlConfig.create().path("/examles1/")
-				.reverse(ReverseConfig.create().url("http://localhost:8081/"))
+		new ReverseProxy()
+			.addHttpResponseInterceptor(new HtmlLinkConvertInterceptor())
+			.startup(HttpConfig.create().port(8080)
+			.urlConfig(ReverseUrlConfig.create().path("/examples1/")
+				.reverse(ReverseConfig.create().url("http://localhost:1081/"))
 			)
 			.urlConfig(ReverseUrlConfig.create().path("/examples2/")
-				.reverse(ReverseConfig.create().url("http://localhost:8082/"))
+				.reverse(ReverseConfig.create().url("http://localhost:1082/"))
 			)
 		);
 	}

@@ -70,7 +70,9 @@ public class ReverseProxyHandler implements HttpRequestHandler {
 		TextUtils.toLowerCase(HttpHeaders.TE),
 		TextUtils.toLowerCase(HttpHeaders.TRAILER),
 		TextUtils.toLowerCase(HttpHeaders.TRANSFER_ENCODING),
-		TextUtils.toLowerCase(HttpHeaders.UPGRADE)
+		TextUtils.toLowerCase(HttpHeaders.UPGRADE),
+		
+		TextUtils.toLowerCase(HttpHeaders.ACCEPT_ENCODING) //uncompress
 	)));
 
 	protected final HttpHost targetHost;
