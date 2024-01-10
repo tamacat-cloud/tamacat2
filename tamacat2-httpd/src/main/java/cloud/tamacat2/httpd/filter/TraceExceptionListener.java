@@ -36,7 +36,7 @@ public class TraceExceptionListener implements ExceptionListener {
             LOG.debug("[client->httpd] " + Thread.currentThread() + " " + ex.getMessage());
         } else {
         	LOG.debug("[client->httpd] " + Thread.currentThread()  + " " + ex.getMessage());
-        	LOG.debug(ExceptionUtils.getStackTrace(ex));
+        	LOG.trace(ExceptionUtils.getStackTrace(ex));
         }
     }
 
@@ -48,7 +48,7 @@ public class TraceExceptionListener implements ExceptionListener {
         	LOG.debug("[client->httpd] " + Thread.currentThread() + " " + ex.getMessage());
         } else {
         	LOG.debug("[client->httpd] " + Thread.currentThread() + " " + ex.getMessage());
-            LOG.debug(ExceptionUtils.getStackTrace(ex));
+            LOG.trace(ExceptionUtils.getStackTrace(ex));
         }
     }
 
