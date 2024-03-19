@@ -92,7 +92,7 @@ public class WebServerHandler implements HttpRequestHandler {
 				throw new NotFoundException();
 			}
 			URI requestUri = request.getUri();			
-			HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+			HttpCoreContext coreContext = HttpCoreContext.cast(context);
 			EndpointDetails endpoint = coreContext.getEndpointDetails();
 			
 			String path = requestUri.getPath();
