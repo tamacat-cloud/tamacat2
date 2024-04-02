@@ -49,8 +49,8 @@ public class TomcatServer extends ReverseProxy {
 	
 	protected void registerJettyEmbedded(final TomcatConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		try {
-			final TomcatDeployment jettyDeploy = new TomcatDeployment();
-			jettyDeploy.deploy(urlConfig);
+			final TomcatDeployment deploy = new TomcatDeployment();
+			deploy.deploy(urlConfig);
 
 			final HttpHost targetHost = urlConfig.getHttpHost();
 			urlConfig.reverse(ReverseConfig.create().url(targetHost.toURI()+urlConfig.getPath())); //add reverse config to jetty
