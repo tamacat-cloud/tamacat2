@@ -47,7 +47,7 @@ public class TomcatDeployment {
 	protected String contextPath;
 	protected String work = "${server.home}";
 	protected Tomcat tomcat;
-	protected boolean useWarDeploy = true;
+	protected boolean useWarDeploy = false;
 	protected String uriEncoding;
 	protected Boolean useBodyEncodingForURI;
 	
@@ -90,19 +90,20 @@ public class TomcatDeployment {
 	 */
 	protected void deployWebapps(TomcatConfig tomcatConfig) {
 		try {	    	
-			String contextRoot = tomcatConfig.getPath().replaceAll("/$", "");
+			String path = tomcatConfig.getPath().replaceAll("/$", "");
+			String contextPath = this.contextPath;
 			if (StringUtils.isNotEmpty(contextPath)) {
-				contextRoot = contextPath;
+				contextPath = path;
 			}
 	    	//check already add webapp.
-	    	if (tomcat.getHost().findChild(contextRoot) != null) {
+	    	if (tomcat.getHost().findChild(path) != null) {
 	    		return; //skip
 	    	}
-			File baseDir = new File(getWebapps() + contextRoot);
-			Context ctx = tomcat.addWebapp(contextRoot, baseDir.getAbsolutePath());
+			File baseDir = new File(getWebapps() + contextPath);
+			Context ctx = tomcat.addWebapp(path, baseDir.getAbsolutePath());
 			//ctx.setParentClassLoader(getClassLoader());
 			ctx.setJarScanner(createJarScanner());
-			LOG.info("Tomcat port="+tomcatConfig.getPort()+", path="+contextRoot+", dir="+baseDir.getAbsolutePath());
+			LOG.info("Tomcat port="+tomcatConfig.getPort()+", path="+path+", dir="+baseDir.getAbsolutePath());
 			
 			allowRemoteAddrValue(ctx);
 		} catch (Exception e) {
