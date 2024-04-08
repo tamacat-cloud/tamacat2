@@ -71,6 +71,7 @@ import org.apache.hc.core5.util.Args;
 
 /**
  * Override httpcore5-5.2.2 org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap.java
+ * https://github.com/apache/httpcomponents-core/blob/master/httpcore5/src/main/java/org/apache/hc/core5/http/impl/bootstrap/ServerBootstrap.java
  * use CustomRequestHandlerRegistry
  * 
  * {@link HttpServer} bootstrap.
@@ -142,7 +143,7 @@ public class CustomServerBootstrap {
     }
 
     /**
-     * Sets connection configuration.
+     * Sets HTTP/1 protocol configuration.
      */
     public final CustomServerBootstrap setHttp1Config(final Http1Config http1Config) {
         this.http1Config = http1Config;
@@ -382,6 +383,7 @@ public class CustomServerBootstrap {
         final HttpService httpService = new HttpService(
                 this.httpProcessor != null ? this.httpProcessor : HttpProcessors.server(),
                 requestHandler,
+                this.http1Config,
                 this.connStrategy != null ? this.connStrategy : DefaultConnectionReuseStrategy.INSTANCE,
                 this.streamListener);
 
@@ -407,7 +409,7 @@ public class CustomServerBootstrap {
                 this.socketConfig != null ? this.socketConfig : SocketConfig.DEFAULT,
                 serverSocketFactoryCopy,
                 connectionFactoryCopy,
-                sslSetupHandler != null ? sslSetupHandler : new DefaultTlsSetupHandler(),
+                sslSetupHandler != null ? sslSetupHandler : DefaultTlsSetupHandler.SERVER,
                 this.exceptionListener != null ? this.exceptionListener : ExceptionListener.NO_OP);
     }
 }
