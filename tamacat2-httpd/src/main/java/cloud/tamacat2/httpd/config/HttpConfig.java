@@ -87,6 +87,16 @@ public class HttpConfig {
 		return this;
 	}
 	
+	public HttpConfig maxTotal(int maxTotal) {
+		this.maxTotal = maxTotal;
+		return this;
+	}
+
+	public HttpConfig maxParRoute(int maxParRoute) {
+		this.maxParRoute = maxParRoute;
+		return this;
+	}
+	
 	public int getMaxTotal() {
 		return maxTotal;
 	}

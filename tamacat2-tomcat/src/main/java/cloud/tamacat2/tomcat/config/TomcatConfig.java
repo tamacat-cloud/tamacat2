@@ -23,6 +23,7 @@ public class TomcatConfig extends ReverseUrlConfig {
 	String protocol = "http";
 	String hostname = "127.0.0.1";
 	int port = 8080;
+	String contextPath;
 		
 	public static TomcatConfig create() {
 		return new TomcatConfig();
@@ -45,6 +46,23 @@ public class TomcatConfig extends ReverseUrlConfig {
 	
 	public int getPort() {
 		return port;
+	}
+	
+	public TomcatConfig contextPath(String contextPath) {
+		this.contextPath = contextPath;
+		return this;
+	}
+
+	public TomcatConfig path(String path) {
+		super.path(path);
+		if (contextPath == null) {
+			this.contextPath = path.replace("/$","");
+		}
+		return this;
+	}
+	
+	public String getContextPath() {
+		return contextPath;
 	}
 	
 	public HttpHost getHttpHost() {

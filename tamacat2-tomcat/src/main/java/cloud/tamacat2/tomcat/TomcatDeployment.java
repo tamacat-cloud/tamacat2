@@ -91,7 +91,7 @@ public class TomcatDeployment {
 	protected void deployWebapps(TomcatConfig tomcatConfig) {
 		try {	    	
 			String path = tomcatConfig.getPath().replaceAll("/$", "");
-			String contextPath = this.contextPath;
+			String contextPath = tomcatConfig.getContextPath();
 			if (StringUtils.isNotEmpty(contextPath)) {
 				contextPath = path;
 			}
