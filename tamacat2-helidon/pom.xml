@@ -20,7 +20,7 @@
   </licenses>
 
   <properties>
-    <helidon-microprofile.version>3.2.7</helidon-microprofile.version>
+    <helidon-microprofile.version>3.2.8</helidon-microprofile.version>
   </properties>
   
   <dependencies>
