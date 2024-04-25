@@ -102,7 +102,7 @@ public class WebServerHandler implements HttpRequestHandler {
 			if (path.endsWith("/")) {
 				path = path + welcomeFile;
 			}
-			File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), ""));
+			File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/"));
 			if (!file.exists()) {
 				//if (LOG.isTraceEnabled()) {
 					LOG.debug(endpoint + ": Not found. file=" + file.getPath());
