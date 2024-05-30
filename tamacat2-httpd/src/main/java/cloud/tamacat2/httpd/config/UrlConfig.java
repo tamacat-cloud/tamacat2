@@ -37,6 +37,7 @@ public class UrlConfig {
 		
 	protected HttpConfig httpConfig;
 	protected String serverHome;
+	protected boolean useDirectoryListing = false;
 
 	final protected Collection<HttpFilter> httpFilters = new ArrayList<>();
 	
@@ -120,8 +121,17 @@ public class UrlConfig {
 		return httpFilters;
 	}
 	
-	public UrlConfig filter(HttpFilter filter) {
+	public UrlConfig filter(final HttpFilter filter) {
 		httpFilters.add(filter);
 		return this;
+	}
+	
+	public UrlConfig directoryListing(final boolean useDirectoryListing) {
+		this.useDirectoryListing = useDirectoryListing;
+		return this;
+	}
+	
+	public boolean useDirectoryListing() {
+		return useDirectoryListing;
 	}
 }

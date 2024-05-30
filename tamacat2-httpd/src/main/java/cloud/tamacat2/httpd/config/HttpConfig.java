@@ -87,12 +87,12 @@ public class HttpConfig {
 		return this;
 	}
 	
-	public HttpConfig maxTotal(int maxTotal) {
+	public HttpConfig maxTotal(final int maxTotal) {
 		this.maxTotal = maxTotal;
 		return this;
 	}
 
-	public HttpConfig maxParRoute(int maxParRoute) {
+	public HttpConfig maxParRoute(final int maxParRoute) {
 		this.maxParRoute = maxParRoute;
 		return this;
 	}

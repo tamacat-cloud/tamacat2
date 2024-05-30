@@ -45,6 +45,7 @@ import cloud.tamacat2.httpd.plugin.PluginServer;
 import cloud.tamacat2.httpd.ssl.SSLContextCreator;
 import cloud.tamacat2.httpd.util.StringUtils;
 import cloud.tamacat2.httpd.web.GzipContentEncodingInterceptor;
+import cloud.tamacat2.httpd.web.WebServerDirectoryFileListHandler;
 import cloud.tamacat2.httpd.web.WebServerHandler;
 
 public class WebServer {
@@ -58,7 +59,7 @@ public class WebServer {
 	protected final Collection<HttpRequestInterceptor> httpRequestInterceptors = new ArrayList<>();
 	protected final Collection<HttpResponseInterceptor> httpResponseInterceptors = new ArrayList<>();
 
-	protected Collection<PluginServer> pluginServers = new ArrayList<>();
+	protected final Collection<PluginServer> pluginServers = new ArrayList<>();
 	
 	public void startup(final HttpConfig config) {
 		final int port = config.getPort();
@@ -83,7 +84,7 @@ public class WebServer {
 		}
 	}
 	
-	public void addPluginServer(PluginServer pluginServer) {
+	public void addPluginServer(final PluginServer pluginServer) {
 		pluginServers.add(pluginServer);
 	}
 	
@@ -154,7 +155,11 @@ public class WebServer {
 	}
 
 	protected void registerWebServer(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
-		register(urlConfig, bootstrap, new WebServerHandler(urlConfig));
+		if (urlConfig.useDirectoryListing()) {
+			register(urlConfig, bootstrap, new WebServerDirectoryFileListHandler(urlConfig));
+		} else {
+			register(urlConfig, bootstrap, new WebServerHandler(urlConfig));
+		}
 	}
 
 	protected void register(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap, final HttpRequestHandler handler) {
