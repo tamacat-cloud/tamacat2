@@ -99,7 +99,7 @@ public class WebServer {
 		
 		final CustomServerBootstrap bootstrap = CustomServerBootstrap.bootstrap()
 				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
-				.setCanonicalHostName(config.getServerName())
+				//.setCanonicalHostName(config.getServerName()) //Not authoritative
 				.setListenerPort(config.getPort())
 				//.setStreamListener(new TraceHttp1StreamListener("client<-httpd"))
 				//.setSocketConfig(SocketConfig.custom()
@@ -166,7 +166,7 @@ public class WebServer {
 		try {
 			if (StringUtils.isNotEmpty(urlConfig.getHostname())) {
 				LOG.info("register: VirtualHost="+getVirtualHost(urlConfig)+", path="+urlConfig.getPath() +"* WebServer");
-				bootstrap.registerVirtual(urlConfig.getHostname(), urlConfig.getPath() + "*", handler);
+				bootstrap.register(urlConfig.getHostname(), urlConfig.getPath() + "*", handler);
 			} else {
 				LOG.info("register: path="+urlConfig.getPath() +"* WebServer");
 				bootstrap.register(urlConfig.getPath() + "*", handler);
