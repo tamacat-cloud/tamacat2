@@ -89,17 +89,17 @@ public class WebServer {
 	}
 	
 	protected void startPluginServers() {
-		for (PluginServer plugin : pluginServers) {
+		for (final PluginServer plugin : pluginServers) {
 			plugin.start();
 		}
 	}
 	
 	public HttpServer createHttpServer(final HttpConfig config) {
 		final Collection<UrlConfig> configs = config.getUrlConfigs();
-		
+
 		final CustomServerBootstrap bootstrap = CustomServerBootstrap.bootstrap()
 				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
-				//.setCanonicalHostName(config.getServerName()) //Not authoritative
+				.setCanonicalHostName(config.getCanonicalHostName()) //Not authoritative
 				.setListenerPort(config.getPort())
 				//.setStreamListener(new TraceHttp1StreamListener("client<-httpd"))
 				//.setSocketConfig(SocketConfig.custom()
@@ -122,7 +122,7 @@ public class WebServer {
 			bootstrap.setSslContext(sslContext);
 		}
 
-		for (UrlConfig urlConfig : configs) {
+		for (final UrlConfig urlConfig : configs) {
 			register(urlConfig.httpConfig(config), bootstrap);
 			
 			//add HttpFilters

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -34,7 +33,6 @@ import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
-import org.apache.hc.core5.http.impl.EnglishReasonPhraseCatalog;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -48,6 +46,7 @@ import cloud.tamacat2.httpd.error.ErrorPageTemplate;
 import cloud.tamacat2.httpd.error.ForbiddenException;
 import cloud.tamacat2.httpd.error.HttpStatusException;
 import cloud.tamacat2.httpd.error.NotFoundException;
+import cloud.tamacat2.httpd.util.AccessLogUtils;
 import cloud.tamacat2.httpd.util.HeaderUtils;
 import cloud.tamacat2.httpd.util.MimeUtils;
 import cloud.tamacat2.httpd.util.StringUtils;
@@ -59,7 +58,6 @@ import cloud.tamacat2.httpd.util.StringUtils;
  */
 public class WebServerHandler implements HttpRequestHandler {
 
-	static final Logger ACCESS = LoggerFactory.getLogger("Access");
 	static final Logger LOG = LoggerFactory.getLogger(WebServerHandler.class);
 
 	protected ClassLoader loader;
@@ -86,6 +84,7 @@ public class WebServerHandler implements HttpRequestHandler {
             final ClassicHttpRequest request,
             final ClassicHttpResponse response,
             final HttpContext context) throws HttpException, IOException {
+		long startTime = System.currentTimeMillis();
 		try {
 			//If docsRoot is null then always return 404 Not Found.
 			if (docsRoot == null) {
@@ -124,12 +123,13 @@ public class WebServerHandler implements HttpRequestHandler {
 			}
 			setEntity(response, new FileEntity(file, contentType));
 			response.setCode(HttpStatus.SC_OK);
-			ACCESS.info(request+" 200 [OK]");
 		} catch (HttpStatusException e) {
 			handleException(request, response, context, e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			handleException(request, response, context, defaultException);
+		} finally {
+			AccessLogUtils.log(request, response, context, (System.currentTimeMillis() - startTime));
 		}
 	}
 
@@ -142,8 +142,6 @@ public class WebServerHandler implements HttpRequestHandler {
 			setEntity(resp, new StringEntity(ErrorPageTemplate.create().getHtml(e), ContentType.TEXT_HTML));
 		}
 		resp.setCode(e.getHttpStatus());
-		ACCESS.info(req + " " + e.getHttpStatus()
-			+ " [" + EnglishReasonPhraseCatalog.INSTANCE.getReason(e.getHttpStatus(), Locale.US) + "]");
 	}
 	
 	protected void setEntity(final HttpResponse response, final HttpEntity entity) {
