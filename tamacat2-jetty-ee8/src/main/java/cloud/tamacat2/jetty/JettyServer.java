@@ -50,8 +50,8 @@ public class JettyServer extends ReverseProxy {
 	
 	protected void registerJettyEmbedded(final JettyUrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		try {
-			final JettyDeployment jettyDeploy = new JettyDeploymentEE8();
-			jettyDeploy.deploy(urlConfig);
+			final JettyDeployment deploy = new JettyDeploymentEE8();
+			deploy.deploy(urlConfig);
 
 			final HttpHost targetHost = urlConfig.getHttpHost();
 			urlConfig.reverse(ReverseConfig.create().url(targetHost.toURI()+urlConfig.getPath())); //add reverse config to jetty

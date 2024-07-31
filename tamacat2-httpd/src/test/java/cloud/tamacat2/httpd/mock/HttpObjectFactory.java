@@ -22,8 +22,8 @@ import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.ProtocolVersion;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicHttpResponse;
-import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
 
 public class HttpObjectFactory {
 
@@ -51,6 +51,6 @@ public class HttpObjectFactory {
 	}
 
 	public static HttpContext createHttpContext() {
-		return new BasicHttpContext();
+		return HttpCoreContext.create();
 	}
 }

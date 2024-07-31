@@ -23,6 +23,7 @@ import cloud.tamacat2.httpd.util.StringUtils;
 public class HttpConfig {
 	
 	protected String serverName = "Httpd";
+	protected String canonicalHostName;
 	protected int port = 80;
 	protected boolean useHttps;
 	protected HttpsConfig httpsConfig;
@@ -47,6 +48,15 @@ public class HttpConfig {
 	
 	public String getServerName() {
 		return serverName;
+	}
+	
+	public HttpConfig canonicalHostName(final String canonicalHostName) {
+		this.canonicalHostName = canonicalHostName;
+		return this;
+	}
+	
+	public String getCanonicalHostName() {
+		return canonicalHostName;
 	}
 	
 	public int getPort() {
@@ -84,6 +94,16 @@ public class HttpConfig {
 	
 	public HttpConfig urlConfigs(final Collection<UrlConfig> urlConfigs) {
 		this.urlConfigs = urlConfigs;
+		return this;
+	}
+	
+	public HttpConfig maxTotal(final int maxTotal) {
+		this.maxTotal = maxTotal;
+		return this;
+	}
+
+	public HttpConfig maxParRoute(final int maxParRoute) {
+		this.maxParRoute = maxParRoute;
 		return this;
 	}
 	

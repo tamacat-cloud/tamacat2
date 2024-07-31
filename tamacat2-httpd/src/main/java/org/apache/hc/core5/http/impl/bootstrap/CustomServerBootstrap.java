@@ -39,6 +39,7 @@ import org.apache.hc.core5.function.Callback;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ConnectionReuseStrategy;
 import org.apache.hc.core5.http.ExceptionListener;
+import org.apache.hc.core5.http.HttpRequestMapper;
 import org.apache.hc.core5.http.HttpResponseFactory;
 import org.apache.hc.core5.http.URIScheme;
 import org.apache.hc.core5.http.config.CharCodingConfig;
@@ -51,6 +52,7 @@ import org.apache.hc.core5.http.impl.io.DefaultBHttpServerConnection;
 import org.apache.hc.core5.http.impl.io.DefaultBHttpServerConnectionFactory;
 import org.apache.hc.core5.http.impl.io.DefaultClassicHttpResponseFactory;
 import org.apache.hc.core5.http.impl.io.HttpService;
+import org.apache.hc.core5.http.impl.routing.RequestRouter;
 import org.apache.hc.core5.http.io.HttpConnectionFactory;
 import org.apache.hc.core5.http.io.HttpFilterHandler;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
@@ -64,25 +66,28 @@ import org.apache.hc.core5.http.io.support.HttpServerFilterChainElement;
 import org.apache.hc.core5.http.io.support.HttpServerFilterChainRequestHandler;
 import org.apache.hc.core5.http.io.support.TerminalServerFilter;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
-import org.apache.hc.core5.http.protocol.LookupRegistry;
 import org.apache.hc.core5.http.protocol.UriPatternType;
-import org.apache.hc.core5.net.InetAddressUtils;
+//import org.apache.hc.core5.net.InetAddressUtils;
+import org.apache.hc.core5.net.URIAuthority;
 import org.apache.hc.core5.util.Args;
 
 /**
- * Override httpcore5-5.2.2 org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap.java
+ * Override httpcore5-5.3-beta1 org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap.java
+ * https://github.com/apache/httpcomponents-core/blob/master/httpcore5/src/main/java/org/apache/hc/core5/http/impl/bootstrap/ServerBootstrap.java
  * use CustomRequestHandlerRegistry
  * 
  * {@link HttpServer} bootstrap.
  *
  * @since 4.4
  */
+
 public class CustomServerBootstrap {
 	
-    private final List<HandlerEntry<HttpRequestHandler>> handlerList;
+	private final List<RequestRouter.Entry<HttpRequestHandler>> routeEntries;
     private final List<FilterEntry<HttpFilterHandler>> filters;
     private String canonicalHostName;
-    private LookupRegistry<HttpRequestHandler> lookupRegistry;
+    private HttpRequestMapper<HttpRequestHandler> requestRouter;
+//	private org.apache.hc.core5.http.protocol.LookupRegistry<HttpRequestHandler> lookupRegistry;
     private int listenerPort;
     private InetAddress localAddress;
     private SocketConfig socketConfig;
@@ -99,7 +104,7 @@ public class CustomServerBootstrap {
     private Http1StreamListener streamListener;
 
     private CustomServerBootstrap() {
-        this.handlerList = new ArrayList<>();
+        this.routeEntries = new ArrayList<>();
         this.filters = new ArrayList<>();
     }
 
@@ -142,7 +147,7 @@ public class CustomServerBootstrap {
     }
 
     /**
-     * Sets connection configuration.
+     * Sets HTTP/1 protocol configuration.
      */
     public final CustomServerBootstrap setHttp1Config(final Http1Config http1Config) {
         this.http1Config = http1Config;
@@ -181,13 +186,14 @@ public class CustomServerBootstrap {
         return this;
     }
 
-    /**
-     * Assigns {@link LookupRegistry} instance.
-     */
-    public final CustomServerBootstrap setLookupRegistry(final LookupRegistry<HttpRequestHandler> lookupRegistry) {
-        this.lookupRegistry = lookupRegistry;
-        return this;
-    }
+//    /**
+//     * @deprecated Use {@link RequestRouter}.
+//     */
+//    @Deprecated
+//    public final CustomServerBootstrap setLookupRegistry(final org.apache.hc.core5.http.protocol.LookupRegistry<HttpRequestHandler> lookupRegistry) {
+//        this.lookupRegistry = lookupRegistry;
+//        return this;
+//    }
 
     /**
      * Registers the given {@link HttpRequestHandler} as a default handler for URIs
@@ -199,7 +205,7 @@ public class CustomServerBootstrap {
     public final CustomServerBootstrap register(final String uriPattern, final HttpRequestHandler requestHandler) {
         Args.notBlank(uriPattern, "URI pattern");
         Args.notNull(requestHandler, "Supplier");
-        handlerList.add(new HandlerEntry<>(null, uriPattern, requestHandler));
+        routeEntries.add(new RequestRouter.Entry<>(uriPattern, requestHandler));
         return this;
     }
 
@@ -210,12 +216,33 @@ public class CustomServerBootstrap {
      * @param hostname
      * @param uriPattern the pattern to register the handler for.
      * @param requestHandler the handler.
+     *
+     * @since 5.3
      */
-    public final CustomServerBootstrap registerVirtual(final String hostname, final String uriPattern, final HttpRequestHandler requestHandler) {
+    public final CustomServerBootstrap register(final String hostname, final String uriPattern, final HttpRequestHandler requestHandler) {
         Args.notBlank(hostname, "Hostname");
         Args.notBlank(uriPattern, "URI pattern");
-        Args.notNull(requestHandler, "Supplier");
-        handlerList.add(new HandlerEntry<>(hostname, uriPattern, requestHandler));
+        Args.notNull(requestHandler, "Request handler");
+        routeEntries.add(new RequestRouter.Entry<>(hostname, uriPattern, requestHandler));
+        return this;
+    }
+
+    /**
+     * @deprecated Use {@link #register(String, String, HttpRequestHandler)}.
+     */
+    @Deprecated
+    public final CustomServerBootstrap registerVirtual(final String hostname, final String uriPattern, final HttpRequestHandler requestHandler) {
+        return register(hostname, uriPattern, requestHandler);
+    }
+
+    /**
+     * Assigns {@link HttpRequestMapper} instance.
+     *
+     * @see org.apache.hc.core5.http.impl.routing.RequestRouter
+     * @since 5.3
+     */
+    public final CustomServerBootstrap setRequestRouter(final HttpRequestMapper<HttpRequestHandler> requestRouter) {
+        this.requestRouter = requestRouter;
         return this;
     }
 
@@ -323,21 +350,36 @@ public class CustomServerBootstrap {
         return this;
     }
 
-    public HttpServer create() {
-        final CustomRequestHandlerRegistry<HttpRequestHandler> handlerRegistry = new CustomRequestHandlerRegistry<>(
-                canonicalHostName != null ? canonicalHostName : InetAddressUtils.getCanonicalLocalHostName(),
-                () -> lookupRegistry != null ? lookupRegistry :
-                        UriPatternType.newMatcher(UriPatternType.URI_PATTERN));
-        for (final HandlerEntry<HttpRequestHandler> entry: handlerList) {
-            handlerRegistry.register(entry.hostname, entry.uriPattern, entry.handler);
-        }
+	public HttpServer create() {
+        //final String actualCanonicalHostName = canonicalHostName != null ? canonicalHostName : InetAddressUtils.getCanonicalLocalHostName();
+        final HttpRequestMapper<HttpRequestHandler> requestRouterCopy;
+//        if (lookupRegistry != null && requestRouter == null) {
+//			final CustomRequestHandlerRegistry<HttpRequestHandler> handlerRegistry = new CustomRequestHandlerRegistry<>(
+//                    actualCanonicalHostName,
+//                    () -> lookupRegistry != null ? lookupRegistry : new org.apache.hc.core5.http.protocol.UriPatternMatcher<>());
+//            for (final RequestRouter.Entry<HttpRequestHandler> entry: routeEntries) {
+//                handlerRegistry.register(entry.uriAuthority != null ? entry.uriAuthority.getHostName() : null, entry.route.pattern, entry.route.handler);
+//            }
+//            requestRouterCopy = handlerRegistry;
+//        } else {
+            if (routeEntries.isEmpty()) {
+                requestRouterCopy = requestRouter;
+            } else {
+                requestRouterCopy = RequestRouter.create(
+                		canonicalHostName != null ? new URIAuthority(canonicalHostName): null,
+                        UriPatternType.URI_PATTERN,
+                        routeEntries,
+                        RequestRouter.IGNORE_PORT_AUTHORITY_RESOLVER,
+                        requestRouter);
+            }
+//        }
 
         final HttpServerRequestHandler requestHandler;
         if (!filters.isEmpty()) {
             final NamedElementChain<HttpFilterHandler> filterChainDefinition = new NamedElementChain<>();
             filterChainDefinition.addLast(
                     new TerminalServerFilter(
-                            handlerRegistry,
+                            requestRouterCopy,
                             this.responseFactory != null ? this.responseFactory : DefaultClassicHttpResponseFactory.INSTANCE),
                     StandardFilter.MAIN_HANDLER.name());
             filterChainDefinition.addFirst(
@@ -375,28 +417,21 @@ public class CustomServerBootstrap {
             requestHandler = new HttpServerFilterChainRequestHandler(filterChain);
         } else {
             requestHandler = new BasicHttpServerExpectationDecorator(new BasicHttpServerRequestHandler(
-                    handlerRegistry,
+                    requestRouterCopy,
                     this.responseFactory != null ? this.responseFactory : DefaultClassicHttpResponseFactory.INSTANCE));
         }
 
         final HttpService httpService = new HttpService(
                 this.httpProcessor != null ? this.httpProcessor : HttpProcessors.server(),
                 requestHandler,
+                this.http1Config,
                 this.connStrategy != null ? this.connStrategy : DefaultConnectionReuseStrategy.INSTANCE,
                 this.streamListener);
 
-        ServerSocketFactory serverSocketFactoryCopy = this.serverSocketFactory;
-        if (serverSocketFactoryCopy == null) {
-            if (this.sslContext != null) {
-                serverSocketFactoryCopy = this.sslContext.getServerSocketFactory();
-            } else {
-                serverSocketFactoryCopy = ServerSocketFactory.getDefault();
-            }
-        }
-
         HttpConnectionFactory<? extends DefaultBHttpServerConnection> connectionFactoryCopy = this.connectionFactory;
         if (connectionFactoryCopy == null) {
-            final String scheme = serverSocketFactoryCopy instanceof SSLServerSocketFactory ? URIScheme.HTTPS.id : URIScheme.HTTP.id;
+            final String scheme = serverSocketFactory instanceof SSLServerSocketFactory || sslContext != null ?
+                    URIScheme.HTTPS.id : URIScheme.HTTP.id;
             connectionFactoryCopy = new DefaultBHttpServerConnectionFactory(scheme, this.http1Config, this.charCodingConfig);
         }
 
@@ -405,9 +440,10 @@ public class CustomServerBootstrap {
                 httpService,
                 this.localAddress,
                 this.socketConfig != null ? this.socketConfig : SocketConfig.DEFAULT,
-                serverSocketFactoryCopy,
+                serverSocketFactory,
                 connectionFactoryCopy,
-                sslSetupHandler != null ? sslSetupHandler : new DefaultTlsSetupHandler(),
+                sslContext,
+                sslSetupHandler != null ? sslSetupHandler : DefaultTlsSetupHandler.SERVER,
                 this.exceptionListener != null ? this.exceptionListener : ExceptionListener.NO_OP);
     }
 }

@@ -29,7 +29,6 @@ import java.nio.charset.Charset;
 import java.util.Set;
 
 import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpConnection;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpRequest;
@@ -37,7 +36,6 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.HttpServerConnection;
 import org.apache.hc.core5.http.message.RequestLine;
 import org.apache.hc.core5.http.protocol.HttpContext;
-import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,10 +210,6 @@ public class RequestUtils {
 	public static Set<String> getParameterNames(HttpContext context) {
 		RequestParameters params = getParameters(context);
 		return params != null ? params.getParameterNames() : null;
-	}
-
-	public static HttpConnection getHttpConnection(HttpContext context) {
-		return (HttpConnection) context.getAttribute(HttpCoreContext.CONNECTION_ENDPOINT);
 	}
 
 	/**
@@ -454,14 +448,5 @@ public class RequestUtils {
 			return path.substring(0, idx) + "/";
 		}
 		return path;
-	}
-
-	/**
-	 *
-	 * @param context
-	 * @since 1.1
-	 */
-	public static HttpRequest getHttpRequest(HttpContext context) {
-		return (HttpRequest) context.getAttribute(HttpCoreContext.HTTP_REQUEST);
 	}
 }

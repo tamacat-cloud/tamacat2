@@ -126,8 +126,11 @@ public class ReverseProxyHandler implements HttpRequestHandler {
 		outgoingResponse.setCode(incomingResponse.getCode());
 		outgoingResponse.setVersion(incomingRequest.getVersion());
 		//Backend access log
-		AccessLogUtils.log(LOG, outgoingRequest, outgoingResponse, clientContext, (System.currentTimeMillis()-startTime));
-			
+		if (LOG.isTraceEnabled()) {
+			AccessLogUtils.trace(LOG, outgoingRequest, outgoingResponse, clientContext, (System.currentTimeMillis()-startTime));
+		} else {
+			AccessLogUtils.debug(LOG, outgoingRequest, outgoingResponse, clientContext, (System.currentTimeMillis()-startTime));
+		}
 		//Copy response headers
 		for (final Iterator<Header> it = incomingResponse.headerIterator(); it.hasNext();) {
 			final Header header = it.next();

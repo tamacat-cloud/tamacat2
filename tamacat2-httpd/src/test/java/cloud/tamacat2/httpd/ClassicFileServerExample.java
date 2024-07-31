@@ -182,7 +182,7 @@ public class ClassicFileServerExample {
                 System.out.println(msg);
 
             } else {
-                final HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+                final HttpCoreContext coreContext = HttpCoreContext.cast(context);
                 final EndpointDetails endpoint = coreContext.getEndpointDetails();
                 response.setCode(HttpStatus.SC_OK);
                 final FileEntity body = new FileEntity(file, ContentType.create("text/html", (Charset) null));

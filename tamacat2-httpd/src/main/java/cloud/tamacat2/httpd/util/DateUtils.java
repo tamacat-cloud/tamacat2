@@ -18,34 +18,34 @@ public abstract class DateUtils {
 
 	static final Locale currentLocale = Locale.getDefault();
 
-	public static String getTime(Date date, String pattern) {
+	public static String getTime(final Date date, final String pattern) {
 		return getTime(date, pattern, currentLocale);
 	}
 
-	public static String getTime(Date date, String pattern, Locale locale) {
+	public static String getTime(final Date date, final String pattern, final Locale locale) {
 		SimpleDateFormat formatter = new SimpleDateFormat(pattern, locale);
 		return formatter.format(date);
 	}
 
-	public static String getTime(Date date, String pattern, Locale locale, TimeZone zone) {
+	public static String getTime(final Date date, final String pattern, final Locale locale, final TimeZone zone) {
 		SimpleDateFormat formatter = new SimpleDateFormat(pattern, locale);
 		formatter.setTimeZone(zone);
 		return formatter.format(date);
 	}
 
-	public static String getTimestamp(String pattern) {
+	public static String getTimestamp(final String pattern) {
 		return getTime(new Date(), pattern, currentLocale);
 	}
 
-	public static String getTimestamp(String pattern, Locale locale) {
+	public static String getTimestamp(final String pattern, final Locale locale) {
 		return getTime(new Date(), pattern, locale);
 	}
 
-	public static Date parse(String date, String pattern) {
+	public static Date parse(final String date, final String pattern) {
 		return parse(date, pattern, currentLocale);
 	}
 
-	public static Date parse(String date, String pattern, Locale locale) {
+	public static Date parse(final String date, final String pattern, final Locale locale) {
 		SimpleDateFormat formatter = new SimpleDateFormat(pattern, locale);
 		try {
 			return formatter.parse(date);
@@ -54,7 +54,7 @@ public abstract class DateUtils {
 		}
 	}
 
-	public static Date parse(String date, String pattern, Locale locale, TimeZone zone) {
+	public static Date parse(final String date, final String pattern, final Locale locale, final TimeZone zone) {
 		SimpleDateFormat formatter = new SimpleDateFormat(pattern, locale);
 		formatter.setTimeZone(zone);
 		try {
