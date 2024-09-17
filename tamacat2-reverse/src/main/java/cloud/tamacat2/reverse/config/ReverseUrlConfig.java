@@ -36,7 +36,7 @@ public class ReverseUrlConfig extends UrlConfig {
 		return reverse;
 	}
 	
-	public ReverseUrlConfig reverse(ReverseConfig reverse) {
+	public ReverseUrlConfig reverse(final ReverseConfig reverse) {
 		if (reverse != null) {
 			this.reverse = reverse;
 		}
@@ -44,7 +44,7 @@ public class ReverseUrlConfig extends UrlConfig {
 	}
 	
 	@Override
-	public ReverseUrlConfig path(String path) {
+	public ReverseUrlConfig path(final String path) {
 		this.path = path;
 		return this;
 	}

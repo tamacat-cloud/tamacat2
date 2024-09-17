@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URL;
 
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ public class ReverseConfig {
 	UrlConfig urlConfig;
 	
 	private URL host;
+	private Timeout connectTimeout = Timeout.ofSeconds(180L);
 	
 	public static ReverseConfig create() {
 		return new ReverseConfig();
@@ -45,7 +47,7 @@ public class ReverseConfig {
 		return urlConfig.getHttpConfig();
 	}
 	
-	public void setUrlConfig(UrlConfig urlConfig) {
+	public void setUrlConfig(final UrlConfig urlConfig) {
 		this.urlConfig = urlConfig;
 	}
 	
@@ -53,9 +55,9 @@ public class ReverseConfig {
 		return urlConfig;
 	}
 	
-	public void setUrl(String url) {
+	public void setUrl(final String url) {
 		try {
-			URL targetUrl = new URI(url).toURL();
+			final URL targetUrl = new URI(url).toURL();
 			this.target = new HttpHost(targetUrl.getHost(), targetUrl.getPort());
 			this.url = url;
 		} catch (Exception e) {
@@ -63,7 +65,7 @@ public class ReverseConfig {
 		}
 	}
 	
-	public ReverseConfig url(String url) {
+	public ReverseConfig url(final String url) {
 		setUrl(url);
 		return this;
 	}
@@ -83,7 +85,7 @@ public class ReverseConfig {
 		return host;
 	}
 	
-	public void setHost(URL host) {
+	public void setHost(final URL host) {
 		if (host != null) {
 			try {
 				this.host = new URI(host.getProtocol(), null, host.getHost(), host.getPort(), "", null, null).toURL();
@@ -102,17 +104,17 @@ public class ReverseConfig {
 		return null;
 	}
 	
-	public URL getReverseUrl(String path) {
-		String p = urlConfig.getPath();
+	public URL getReverseUrl(final String path) {
+		final String p = urlConfig.getPath();
 		if (path != null && p != null && path.startsWith(p)) {
-			URL reverseUrl = getReverse();
-			String distUrl = path.replaceFirst(urlConfig.getPath(), reverseUrl.getPath());
+			final URL reverseUrl = getReverse();
+			final String distUrl = path.replaceFirst(urlConfig.getPath(), reverseUrl.getPath());
 			try {
 				int port = reverseUrl.getPort();
 				if (port == -1) {
 					port = reverseUrl.getDefaultPort();
 				}
-				URI dist = new URI(distUrl);
+				final URI dist = new URI(distUrl);
 				return new URI(reverseUrl.getProtocol(), null, reverseUrl.getHost(), port,
 						dist.getPath(), dist.getQuery(), dist.getFragment()).toURL();
 			} catch (Exception e) {
@@ -126,9 +128,9 @@ public class ReverseConfig {
 	 * path: http://localhost:8080/examples/servlet
 	 *   =>  http://localhost/examples2/servlet
 	 */
-	public String getConvertRequestedUrl(String path) {
-		URL reverseUrl = getReverse();
-		URL host = getHost(); // requested URL (path is deleted)
+	public String getConvertRequestedUrl(final String path) {
+		final URL reverseUrl = getReverse();
+		final URL host = getHost(); // requested URL (path is deleted)
 		if (path != null && host != null) {
 			return path.replaceFirst(
 				reverseUrl.getProtocol() + "://" + reverseUrl.getAuthority(), host.toString())
@@ -138,6 +140,15 @@ public class ReverseConfig {
 		}
 	}
 
+	public ReverseConfig connectTimeout(final Timeout connectTimeout) {
+		this.connectTimeout = connectTimeout;
+		return this;
+	}
+	
+	public Timeout getConnectTimeout() {
+		return connectTimeout;
+	}
+	
 	@Override
 	public String toString() {
 		return "ReverseConfig [url=" + url + "]";

@@ -47,6 +47,7 @@ import cloud.tamacat2.httpd.error.ForbiddenException;
 import cloud.tamacat2.httpd.error.HttpStatusException;
 import cloud.tamacat2.httpd.error.NotFoundException;
 import cloud.tamacat2.httpd.util.AccessLogUtils;
+import cloud.tamacat2.httpd.util.ExceptionUtils;
 import cloud.tamacat2.httpd.util.HeaderUtils;
 import cloud.tamacat2.httpd.util.MimeUtils;
 import cloud.tamacat2.httpd.util.StringUtils;
@@ -90,9 +91,9 @@ public class WebServerHandler implements HttpRequestHandler {
 			if (docsRoot == null) {
 				throw new NotFoundException();
 			}
-			URI requestUri = request.getUri();			
-			HttpCoreContext coreContext = HttpCoreContext.cast(context);
-			EndpointDetails endpoint = coreContext.getEndpointDetails();
+			final URI requestUri = request.getUri();			
+			final HttpCoreContext coreContext = HttpCoreContext.cast(context);
+			final EndpointDetails endpoint = coreContext.getEndpointDetails();
 			
 			String path = requestUri.getPath();
 			if (StringUtils.isEmpty(path) || path.contains("..")) {
@@ -101,7 +102,7 @@ public class WebServerHandler implements HttpRequestHandler {
 			if (path.endsWith("/")) {
 				path = path + welcomeFile;
 			}
-			File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/"));
+			final File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/"));
 			if (!file.exists()) {
 				//if (LOG.isTraceEnabled()) {
 					LOG.debug(endpoint + ": Not found. file=" + file.getPath());
@@ -114,7 +115,7 @@ public class WebServerHandler implements HttpRequestHandler {
 				throw new ForbiddenException();
 			}
 			ContentType contentType = ContentType.DEFAULT_BINARY;
-			String mime = MimeUtils.getContentType(path);
+			final String mime = MimeUtils.getContentType(path);
 			if (contentType != null) {
 				contentType = ContentType.parse(mime);
 			}
@@ -126,7 +127,7 @@ public class WebServerHandler implements HttpRequestHandler {
 		} catch (HttpStatusException e) {
 			handleException(request, response, context, e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.warn(ExceptionUtils.getStackTrace(e, 100));
 			handleException(request, response, context, defaultException);
 		} finally {
 			AccessLogUtils.log(request, response, context, (System.currentTimeMillis() - startTime));

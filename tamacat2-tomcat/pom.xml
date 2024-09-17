@@ -20,7 +20,7 @@
   </licenses>
 
   <properties>
-    <tomcat.version>9.0.94</tomcat.version>
+    <tomcat.version>9.0.95</tomcat.version>
   </properties>
 
   <dependencies>

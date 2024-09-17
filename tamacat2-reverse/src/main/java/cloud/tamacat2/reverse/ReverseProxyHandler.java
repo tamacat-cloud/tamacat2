@@ -37,7 +37,6 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.util.TextUtils;
 import org.apache.hc.core5.util.TimeValue;
-import org.apache.hc.core5.util.Timeout;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +120,8 @@ public class ReverseProxyHandler implements HttpRequestHandler {
 		//		requester.close(CloseMode.GRACEFUL);
 		//	}
 		//});
-		final ClassicHttpResponse incomingResponse = requester.execute(targetHost, outgoingRequest, Timeout.ofMinutes(3), clientContext);
+		final ClassicHttpResponse incomingResponse = requester.execute(targetHost, outgoingRequest,
+			reverseConfig.getConnectTimeout(), clientContext);
 		
 		outgoingResponse.setCode(incomingResponse.getCode());
 		outgoingResponse.setVersion(incomingRequest.getVersion());

@@ -10,15 +10,15 @@ import java.io.StringWriter;
 
 public class ExceptionUtils {
 
-	public static String getStackTrace(Throwable e) {
-		StringWriter out = new StringWriter();
-		PrintWriter w = new PrintWriter(out);
+	public static String getStackTrace(final Throwable e) {
+		final StringWriter out = new StringWriter();
+		final PrintWriter w = new PrintWriter(out);
 		e.printStackTrace(w);
 		w.flush();
 		return out.toString();
 	}
 	
-	public static String getStackTrace(Throwable e, int endIndex) {
+	public static String getStackTrace(final Throwable e, final int endIndex) {
 		String stackTrace = getStackTrace(e);
 		if (stackTrace != null && stackTrace.length() > endIndex) {
 			stackTrace = stackTrace.substring(0, endIndex) + "...";
@@ -26,13 +26,28 @@ public class ExceptionUtils {
 		return stackTrace;
 	}
 	
-	public static boolean isRuntime(Exception e) {
+	public static String jsonEscape(final String value) {
+		if (value != null) {
+			return value.replace("\"", "\\\"").replace("\r", "\\r").replace("\n", "\\n");
+		}
+		return "";
+	}
+	
+	public static String getJsonStackTrace(final Throwable e, final int endIndex) {
+		final String message = jsonEscape(e.getMessage());
+		final String stackTrace = jsonEscape(getStackTrace(e, endIndex));
+		return """
+			{\"message\":\"%s\",\"stackTrace\":\"%s\"}
+			""".formatted(message, stackTrace);
+	}
+	
+	public static boolean isRuntime(final Exception e) {
 		return e != null && e instanceof RuntimeException;
 	}
 	
-	public static Throwable getCauseException(Exception e) {
+	public static Throwable getCauseException(final Exception e) {
 		if (e == null) return null;
-		Throwable cause = e.getCause();
+		final Throwable cause = e.getCause();
 		if (cause != null) return cause;
 		else return e;
 	}

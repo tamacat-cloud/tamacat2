@@ -39,25 +39,25 @@ public class HtmlLinkConvertInterceptor implements HttpResponseInterceptor {
 	 * 
 	 * @param regex The expression to be compiled.(case insensitive)
 	 */
-	public void setLinkPattern(String regex) {
+	public void setLinkPattern(final String regex) {
 		this.linkPatterns.add(Pattern.compile(regex, Pattern.CASE_INSENSITIVE));
 	}
 
 
 	@Override
-	public void process(HttpResponse response, EntityDetails entity, HttpContext context)
+	public void process(final HttpResponse response, final EntityDetails entity, final HttpContext context)
 			throws HttpException, IOException {
 		
 		if (context == null) {
 			throw new IllegalArgumentException("HTTP context may not be null");
 		}
 		
-		ReverseConfig reverseConfig = (ReverseConfig)context.getAttribute(ReverseConfig.class.getName());
+		final ReverseConfig reverseConfig = (ReverseConfig)context.getAttribute(ReverseConfig.class.getName());
 		if (reverseConfig != null) {
-			Header header = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
+			final Header header = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
 			if (header != null && HeaderUtils.inContentType(contentTypes, header)) {
-				String before = reverseConfig.getReverse().getPath();
-				String after = reverseConfig.getUrlConfig().getPath();
+				final String before = reverseConfig.getReverse().getPath();
+				final String after = reverseConfig.getUrlConfig().getPath();
 				LOG.debug(before + "->" + after);
 				if (before.equals(after)) {
 					//none
@@ -98,12 +98,12 @@ public class HtmlLinkConvertInterceptor implements HttpResponseInterceptor {
 	 * 
 	 * @param contentType Comma Separated Value of content-type or sub types.
 	 */
-	public void setContentType(String contentType) {
+	public void setContentType(final String contentType) {
 		if (StringUtils.isNotEmpty(contentType)) {
-			String[] csv = contentType.split(",");
+			final String[] csv = contentType.split(",");
 			for (String t : csv) {
 				contentTypes.add(t.trim().toLowerCase());
-				String[] types = t.split(";")[0].split("/");
+				final String[] types = t.split(";")[0].split("/");
 				if (types.length >= 2) {
 					contentTypes.add(types[1].trim().toLowerCase());
 				}

@@ -3,6 +3,7 @@
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <pattern>%date %-5level [%thread] %logger{20} %X{ip} %message%n</pattern>
     </encoder>
+    <!-- <encoder class="net.logstash.logback.encoder.LogstashEncoder" /> -->
   </appender>
 
   <logger name="Access" level="INFO" />
