@@ -56,11 +56,11 @@ public class HtmlUtils {
 	 * @param defaultCharset
 	 * @return charset (lower case)
 	 */
-	public static String getCharSetFromMetaTag(String html, String defaultCharset) {
+	public static String getCharSetFromMetaTag(final String html, final String defaultCharset) {
 		if (html != null) {
-			Matcher matcher = CHARSET_PATTERN.matcher(html);
+			final Matcher matcher = CHARSET_PATTERN.matcher(html);
 			if (matcher.find()) {
-				String charset = matcher.group(4);
+				final String charset = matcher.group(4);
 				return charset != null ? charset.toLowerCase().trim()
 						: defaultCharset;
 			}
@@ -68,10 +68,10 @@ public class HtmlUtils {
 		return defaultCharset;
 	}
 
-	public static String escapeHtmlMetaChars(String uri) {
+	public static String escapeHtmlMetaChars(final String uri) {
 		if (StringUtils.isEmpty(uri)) return uri;
-		char[] chars = uri.toCharArray();
-		StringBuilder escaped = new StringBuilder();
+		final char[] chars = uri.toCharArray();
+		final StringBuilder escaped = new StringBuilder();
 		for (int i=0; i<chars.length; i++) {
 			char c = chars[i];
 			if (c == '<') {

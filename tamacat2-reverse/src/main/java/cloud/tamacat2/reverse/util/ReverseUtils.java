@@ -86,20 +86,20 @@ public class ReverseUtils {
 			}
 		}
 		if (props != null) {
-			String removeHeaders1 = props.getProperty("request.removeHeaders");
-			String[] headers1 = removeHeaders1.split(",");
-			for (String h : headers1) {
+			final String removeHeaders1 = props.getProperty("request.removeHeaders");
+			final String[] headers1 = removeHeaders1.split(",");
+			for (final String h : headers1) {
 				removeRequestHeaders.add(h.trim());
 			}
-			String removeHeaders2 = props.getProperty("response.removeHeaders");
-			String[]headers2 = removeHeaders2.split(",");
-			for (String h : headers2) {
+			final String removeHeaders2 = props.getProperty("response.removeHeaders");
+			final String[]headers2 = removeHeaders2.split(",");
+			for (final String h : headers2) {
 				removeResponseHeaders.add(h.trim());
 			}
 		}
 	}
 	
-	public static String getReverseTargetPath(ReverseConfig reverseConfig, String incomingRequestPath) {
+	public static String getReverseTargetPath(final ReverseConfig reverseConfig, final String incomingRequestPath) {
 		return reverseConfig != null ? reverseConfig.getReverseUrl(incomingRequestPath).getFile() : incomingRequestPath;
 	}
 
@@ -107,8 +107,8 @@ public class ReverseUtils {
 	 * <p>Remove hop-by-hop headers.
 	 * @param request
 	 */
-	public static void removeRequestHeaders(HttpRequest request) {
-		for (String h : removeRequestHeaders) {
+	public static void removeRequestHeaders(final HttpRequest request) {
+		for (final String h : removeRequestHeaders) {
 			if (LOG.isTraceEnabled()) LOG.trace("remove:"+h);
 			request.removeHeaders(h);
 		}
@@ -119,9 +119,9 @@ public class ReverseUtils {
 	 * @param targetResponse
 	 * @param response
 	 */
-	public static void copyHttpResponse(HttpResponse targetResponse, HttpResponse response) {
+	public static void copyHttpResponse(final HttpResponse targetResponse, final HttpResponse response) {
 		// Remove hop-by-hop headers
-		for (String h : removeResponseHeaders) {
+		for (final String h : removeResponseHeaders) {
 			targetResponse.removeHeaders(h);
 		}
 
@@ -129,9 +129,9 @@ public class ReverseUtils {
 		response.setReasonPhrase(targetResponse.getReasonPhrase());
 		response.setVersion(targetResponse.getVersion());
 		
-		Header[] headers = response.getHeaders("Set-Cookie"); //backup Set-Cookie header.
+		final Header[] headers = response.getHeaders("Set-Cookie"); //backup Set-Cookie header.
 		response.setHeaders(targetResponse.getHeaders()); //clean and reset all headers.
-		for (Header h : headers) { //add Set-Cookie headers.
+		for (final Header h : headers) { //add Set-Cookie headers.
 			response.addHeader(h);
 		}
 	}
@@ -142,7 +142,7 @@ public class ReverseUtils {
 	 * @param response
 	 * @since 1.0.4
 	 */
-	public static void rewriteStatusLine(HttpRequest request, HttpResponse response) {
+	public static void rewriteStatusLine(final HttpRequest request, final HttpResponse response) {
 		response.setVersion(request.getVersion());
 	}
 
@@ -152,12 +152,12 @@ public class ReverseUtils {
 	 * @param reverseUrl
 	 */
 	public static void rewriteContentLocationHeader(
-			HttpRequest request, HttpResponse response, ReverseConfig reverseUrl) {
-		Header[] locationHeaders = response.getHeaders("Content-Location");
+			final HttpRequest request, final HttpResponse response, final ReverseConfig reverseUrl) {
+		final Header[] locationHeaders = response.getHeaders("Content-Location");
 		response.removeHeaders("Content-Location");
-		for (Header location : locationHeaders) {
-			String value = deleteCRLF(location.getValue());
-			String convertUrl = reverseUrl.getConvertRequestedUrl(value);
+		for (final Header location : locationHeaders) {
+			final String value = deleteCRLF(location.getValue());
+			final String convertUrl = reverseUrl.getConvertRequestedUrl(value);
 			if (convertUrl != null) {
 				response.addHeader("Content-Location", convertUrl);
 			}
@@ -170,12 +170,12 @@ public class ReverseUtils {
 	 * @param reverseUrl
 	 */
 	public static void rewriteLocationHeader(
-			HttpRequest request, HttpResponse response, ReverseConfig reverseUrl) {
-		Header[] locationHeaders = response.getHeaders("Location");
+			final HttpRequest request, final HttpResponse response, final ReverseConfig reverseUrl) {
+		final Header[] locationHeaders = response.getHeaders("Location");
 		response.removeHeaders("Location");
-		for (Header location : locationHeaders) {
-			String value = deleteCRLF(location.getValue());
-			String convertUrl = reverseUrl.getConvertRequestedUrl(value);
+		for (final Header location : locationHeaders) {
+			final String value = deleteCRLF(location.getValue());
+			final String convertUrl = reverseUrl.getConvertRequestedUrl(value);
 			if (convertUrl != null) {
 				response.addHeader("Location", convertUrl);
 			}
@@ -188,25 +188,25 @@ public class ReverseUtils {
 	 * @param reverseUrl
 	 */
 	public static void rewriteSetCookieHeader(
-			HttpRequest request, HttpResponse response, ReverseConfig reverseUrl) {
-		Header[] cookies = response.getHeaders("Set-Cookie");
-		List<String> newValues = new ArrayList<>();
-		for (Header h : cookies) {
-			String value = h.getValue();
-			String newValue = ReverseUtils.getConvertedSetCookieHeader(request, reverseUrl, value);
+			final HttpRequest request, final HttpResponse response, final ReverseConfig reverseUrl) {
+		final Header[] cookies = response.getHeaders("Set-Cookie");
+		final List<String> newValues = new ArrayList<>();
+		for (final Header h : cookies) {
+			final String value = h.getValue();
+			final String newValue = ReverseUtils.getConvertedSetCookieHeader(request, reverseUrl, value);
 			if (StringUtils.isNotEmpty(newValue)) {
 				newValues.add(newValue);
 				response.removeHeader(h);
 			}
 		}
-		for (String newValue : newValues) {
+		for (final String newValue : newValues) {
 			response.addHeader("Set-Cookie", newValue);
 			LOG.trace("[after] Set-Cookie: "+newValue);
 		}
 	}
 
-	public static void rewriteServerHeader(HttpResponse response, ReverseConfig reverseUrl) {
-		UrlConfig serviceUrl = reverseUrl.getUrlConfig();
+	public static void rewriteServerHeader(final HttpResponse response, final ReverseConfig reverseUrl) {
+		final UrlConfig serviceUrl = reverseUrl.getUrlConfig();
 		if (serviceUrl != null) {
 			response.setHeader(HttpHeaders.SERVER, serviceUrl.getHttpConfig().getServerName());
 		}
@@ -221,7 +221,8 @@ public class ReverseUtils {
 	 * @param forwardHeader "X-Forwarded-For"
 	 * @since 1.3
 	 */
-	public static void setXForwardedFor(HttpRequest request, HttpContext context, boolean useForwardHeader, String forwardHeader) {
+	public static void setXForwardedFor(final HttpRequest request, final HttpContext context,
+			final boolean useForwardHeader, final String forwardHeader) {
 		request.setHeader(forwardHeader, RequestUtils.getRemoteIPAddress(request, context, useForwardHeader, forwardHeader));
 	}
 	
@@ -229,8 +230,8 @@ public class ReverseUtils {
 	 * <p>Set the forwarded Host request header for origin server.
 	 * @param request
 	 */
-	public static void setXForwardedHost(HttpRequest request) {
-		Header hostHeader = request.getFirstHeader(HttpHeaders.HOST);
+	public static void setXForwardedHost(final HttpRequest request) {
+		final Header hostHeader = request.getFirstHeader(HttpHeaders.HOST);
 		if (hostHeader != null) {
 			request.setHeader("X-Forwarded-Host", hostHeader.getValue());
 		}
@@ -242,8 +243,8 @@ public class ReverseUtils {
 	 * @param config
 	 * @since 1.4-20190416
 	 */
-	public static void setXForwardedProto(HttpRequest request, HttpConfig config) {
-		String proto = HeaderUtils.getHeader(request, "X-Forwarded-Proto");
+	public static void setXForwardedProto(final HttpRequest request, final HttpConfig config) {
+		final String proto = HeaderUtils.getHeader(request, "X-Forwarded-Proto");
 		if (StringUtils.isEmpty(proto)) {
 			if (config.useHttps()) {
 				request.setHeader("X-Forwarded-Proto", "https");
@@ -259,10 +260,10 @@ public class ReverseUtils {
 	 * @param config
 	 * @since 1.4-20190416
 	 */
-	public static void setXForwardedPort(HttpRequest request, HttpConfig config) {
-		String port = HeaderUtils.getHeader(request, "X-Forwarded-Port");
+	public static void setXForwardedPort(final HttpRequest request, final HttpConfig config) {
+		final String port = HeaderUtils.getHeader(request, "X-Forwarded-Port");
 		if (StringUtils.isEmpty(port)) {
-			int serverPort = config.getPort();
+			final int serverPort = config.getPort();
 			if (serverPort > 0) {
 				request.setHeader("X-Forwarded-Port", String.valueOf(serverPort));
 			} else {
@@ -281,9 +282,9 @@ public class ReverseUtils {
 	 * @param context
 	 * @param headerName
 	 */
-	public static void setReverseProxyAuthorization(HttpRequest request, HttpContext context, String headerName) {
+	public static void setReverseProxyAuthorization(final HttpRequest request, final HttpContext context, final String headerName) {
 		if (StringUtils.isNotEmpty(headerName)) {
-			Object user = context.getAttribute("REMOTE_USER"); //TODO
+			final Object user = context.getAttribute("REMOTE_USER"); //TODO
 			if (user != null && user instanceof String) {
 				request.setHeader(headerName, (String)user);
 			} else {
@@ -292,7 +293,7 @@ public class ReverseUtils {
 		}
 	}
 	
-	public static void appendHostHeader(HttpRequest request, ReverseConfig reverseUrl) {
+	public static void appendHostHeader(final HttpRequest request, final ReverseConfig reverseUrl) {
 		if (request.getVersion().lessEquals(HttpVersion.HTTP_1_0)
 		 && StringUtils.isEmpty(HeaderUtils.getHeader(request, HttpHeaders.HOST))) {
 			request.setHeader(HttpHeaders.HOST, reverseUrl.getTarget().getHostName());
@@ -301,26 +302,26 @@ public class ReverseUtils {
 	}
 	
 	//rewrite Host Header
-	public static void rewriteHostHeader(HttpRequest request, HttpContext context, ReverseConfig reverseConfig) {
-		Header[] hostHeaders = request.getHeaders(HttpHeaders.HOST);
-		for (Header hostHeader : hostHeaders) {
-			String value = hostHeader.getValue();
-			URL host = RequestUtils.getRequestURL(request, context, reverseConfig.getUrlConfig());
+	public static void rewriteHostHeader(final HttpRequest request, final HttpContext context, final ReverseConfig reverseConfig) {
+		final Header[] hostHeaders = request.getHeaders(HttpHeaders.HOST);
+		for (final Header hostHeader : hostHeaders) {
+			final String value = hostHeader.getValue();
+			final URL host = RequestUtils.getRequestURL(request, context, reverseConfig.getUrlConfig());
 			reverseConfig.setHost(host);
 			String before = host.getAuthority();
-			int beforePort = host.getPort();
+			final int beforePort = host.getPort();
 			if (beforePort != 80 && beforePort > 0) {
 				before = before + ":" + beforePort;
 			}
 			String after = reverseConfig.getReverse().getHost();
-			int afterPort = reverseConfig.getReverse().getPort();
+			final int afterPort = reverseConfig.getReverse().getPort();
 			if (afterPort != 80 && afterPort > 0) {
 				after = after + ":" + afterPort;
 			}
-			String newValue = value.replace(before, after);
+			final String newValue = value.replace(before, after);
 
 			LOG.trace("Host: " + value + " >> " + newValue);
-			Header newHeader = new BasicHeader(hostHeader.getName(), newValue);
+			final Header newHeader = new BasicHeader(hostHeader.getName(), newValue);
 			request.removeHeader(hostHeader);
 			request.addHeader(newHeader);
 		}
@@ -333,12 +334,12 @@ public class ReverseUtils {
 	 * @return converted Set-Cookie response header line.
 	 */
 	public static String getConvertedSetCookieHeader(
-			HttpRequest request, ReverseConfig reverseUrl, String line) {
+			final HttpRequest request, final ReverseConfig reverseUrl, final String line) {
 		if (line == null) return "";
-		String dist = reverseUrl.getReverse().getHost();
-		URL url = RequestUtils.getRequestURL(request, null);
+		final String dist = reverseUrl.getReverse().getHost();
+		final URL url = RequestUtils.getRequestURL(request, null);
 		if (url == null) return "";
-		String src = url.getHost();
+		final String src = url.getHost();
 		return getConvertedSetCookieHeader(
 				reverseUrl.getReverse().getPath(),
 				reverseUrl.getUrlConfig().getPath(),
@@ -354,10 +355,10 @@ public class ReverseUtils {
 	 *   AFTER : JSESSIONID=1234567890ABCDEFGHIJKLMNOPQRSTUV; Path=/src
 	 * </pre>
 	 */
-	static String getConvertedSetCookieHeader(String dist, String src, String line) {
+	static String getConvertedSetCookieHeader(final String dist, final String src, final String line) {
 		if (line != null) {
-			String d = stripEnd(dist, "/");
-			String s = stripEnd(src, "/");
+			final String d = stripEnd(dist, "/");
+			final String s = stripEnd(src, "/");
 			return Pattern.compile(";\\s*Path=" + d, Pattern.CASE_INSENSITIVE)
 					.matcher(line).replaceAll("; Path=" + s);
 		} else {
@@ -365,7 +366,7 @@ public class ReverseUtils {
 		}
 	}
 
-	static String stripEnd(String str, String stripChars) {
+	static String stripEnd(final String str, final String stripChars) {
 		int end;
 		if (str == null || (end = str.length()) == 0) {
 			return str;
@@ -389,7 +390,7 @@ public class ReverseUtils {
 	 * @param str
 	 * @since 1.1
 	 */
-	static String deleteCRLF(String str) {
+	static String deleteCRLF(final String str) {
 		if (str != null && str.length() > 0 ) {
 			return str.replace("\r", "").replace("\n","");
 		} else {

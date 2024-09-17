@@ -53,11 +53,11 @@ public class LinkConvertingEntity extends HttpEntityWrapper {
 	protected List<Pattern> linkPatterns;
 	protected String defaultCharset = "8859_1";
 
-	public LinkConvertingEntity(HttpEntity entity, String before, String after) {
+	public LinkConvertingEntity(final HttpEntity entity, final String before, final String after) {
 		this(entity, before, after, LINK_PATTERN);
 	}
 
-	public LinkConvertingEntity(HttpEntity entity, String before, String after, List<Pattern> linkPatterns) {
+	public LinkConvertingEntity(final HttpEntity entity, final String before, final String after, final List<Pattern> linkPatterns) {
 		super(entity);
 		this.before = before;
 		this.after = after;
@@ -69,7 +69,7 @@ public class LinkConvertingEntity extends HttpEntityWrapper {
 		}
 	}
 
-	public LinkConvertingEntity(HttpEntity entity, String before, String after, Pattern... linkPattern) {
+	public LinkConvertingEntity(final HttpEntity entity, final String before, final String after, final Pattern... linkPattern) {
 		super(entity);
 		this.before = before;
 		this.after = after;
@@ -83,7 +83,7 @@ public class LinkConvertingEntity extends HttpEntityWrapper {
 		}
 	}
 
-	public void setBufferSize(int bufferSize) {
+	public void setBufferSize(final int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
 
@@ -93,7 +93,7 @@ public class LinkConvertingEntity extends HttpEntityWrapper {
 	}
 
 	@Override
-	public void writeTo(OutputStream outstream) throws IOException {
+	public void writeTo(final OutputStream outstream) throws IOException {
 		if (outstream == null) {
 			throw new IllegalArgumentException("Output stream may not be null");
 		}
@@ -101,7 +101,7 @@ public class LinkConvertingEntity extends HttpEntityWrapper {
 		BufferedReader reader = null;
 		try {
 			this.contentLength = getContentLength();
-			String contentType = getContentType();
+			final String contentType = getContentType();
 			String charset = EncodeUtils.getJavaEncoding(HtmlUtils.getCharSet(contentType));
 			if (charset == null) {
 				charset = defaultCharset;
@@ -113,8 +113,8 @@ public class LinkConvertingEntity extends HttpEntityWrapper {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				line = line + "\r\n";
-				for (Pattern linkPattern : linkPatterns) {
-					ConvertData html = convertLink(line, before, after, linkPattern);
+				for (final Pattern linkPattern : linkPatterns) {
+					final ConvertData html = convertLink(line, before, after, linkPattern);
 					if (html.isConverted()) {
 						line = html.getData();
 					}
@@ -132,20 +132,20 @@ public class LinkConvertingEntity extends HttpEntityWrapper {
 		}
 	}
 
-	public void setDefaultCharset(String defaultCharset) {
+	public void setDefaultCharset(final String defaultCharset) {
 		this.defaultCharset = defaultCharset;
 	}
 
-	public static ConvertData convertLink(String html, String before, String after, Pattern pattern) {
-		Matcher matcher = pattern.matcher(html);
-		StringBuffer result = new StringBuffer();
+	public static ConvertData convertLink(final String html, final String before, final String after, final Pattern pattern) {
+		final Matcher matcher = pattern.matcher(html);
+		final StringBuffer result = new StringBuffer();
 		boolean converted = false;
 		while (matcher.find()) {
-			String url = matcher.group(2);
+			final String url = matcher.group(2);
 			if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/") == false) {
 				continue;
 			}
-			String rev = matcher.group().replaceFirst(before, after);
+			final String rev = matcher.group().replaceFirst(before, after);
 			matcher.appendReplacement(result, rev.replace("$", "\\$"));
 			converted = true;
 		}
@@ -157,7 +157,7 @@ public class LinkConvertingEntity extends HttpEntityWrapper {
 		private final boolean converted;
 		private final String data;
 
-		public ConvertData(String data, boolean converted) {
+		public ConvertData(final String data, final boolean converted) {
 			this.data = data;
 			this.converted = converted;
 		}

@@ -1,6 +1,6 @@
 Automatic-Module-Name: tamacat2.jetty-ee8
 Implementation-Title: tamacat2-jetty-ee8
-Implementation-Version: 2.0-20231109
+Implementation-Version: 2.0-20240917
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: cloud.tamacat2.jetty.ee8
 Bundle-Name: tamacat2-jetty-ee8
