@@ -13,7 +13,7 @@
 - tamacat2-helidon: Support Embedded Helidon MicroProfile Server
 - Required Java 21+ (JRE/JDK)
 - Dependencies:
-  - [Apache HttpComponents HttpCore 5.2](https://hc.apache.org/httpcomponents-core-5.2.x/index.html)
+  - [Apache HttpComponents HttpCore 5.3](https://hc.apache.org/httpcomponents-core-5.3.x/index.html)
   - [SLF4J](https://www.slf4j.org/) + [Logback](https://logback.qos.ch/)
 
 ## License:
