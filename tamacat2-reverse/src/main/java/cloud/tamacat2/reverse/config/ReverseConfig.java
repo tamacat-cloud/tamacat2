@@ -58,7 +58,7 @@ public class ReverseConfig {
 	public void setUrl(final String url) {
 		try {
 			final URL targetUrl = new URI(url).toURL();
-			this.target = new HttpHost(targetUrl.getHost(), targetUrl.getPort());
+			this.target = new HttpHost(targetUrl.getProtocol(), targetUrl.getHost(), targetUrl.getPort());
 			this.url = url;
 		} catch (Exception e) {
 			LOG.warn(e.getMessage());
@@ -131,10 +131,18 @@ public class ReverseConfig {
 	public String getConvertRequestedUrl(final String path) {
 		final URL reverseUrl = getReverse();
 		final URL host = getHost(); // requested URL (path is deleted)
-		if (path != null && host != null) {
-			return path.replaceFirst(
-				reverseUrl.getProtocol() + "://" + reverseUrl.getAuthority(), host.toString())
-					.replace(reverseUrl.getPath(), urlConfig.getPath());
+		if (path != null) {
+			if (host != null) {
+				return path.replaceFirst(
+					reverseUrl.getProtocol() + "://" + reverseUrl.getAuthority(), 
+					host.toString()).replace(reverseUrl.getPath(), urlConfig.getPath()
+				);
+			} else { //ex. Localtion: /examples2/servlet
+				return path.replaceFirst(
+					reverseUrl.getProtocol() + "://" + reverseUrl.getAuthority()+reverseUrl.getPath(),
+					urlConfig.getPath()
+				);
+			}
 		} else {
 			return path;
 		}

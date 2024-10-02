@@ -33,10 +33,18 @@ public class TraceHttp1StreamListener implements Http1StreamListener {
 	
 	@Override
 	public void onRequestHead(HttpConnection connection, HttpRequest request) {
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("[onRequestHead] connection " + connection.getLocalAddress() + "->"
+				+ connection.getRemoteAddress()+" "+request);
+		}
 	}
 
 	@Override
 	public void onResponseHead(HttpConnection connection, HttpResponse response) {
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("[onResponseHead] connection " + connection.getLocalAddress() + "->"
+				+ connection.getRemoteAddress()+" "+response);
+		}
 	}
 
 	@Override

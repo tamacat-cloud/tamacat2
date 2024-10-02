@@ -18,12 +18,16 @@ package cloud.tamacat2.reverse.config;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.hc.core5.http.impl.Http1StreamListener;
+
 import cloud.tamacat2.httpd.config.UrlConfig;
+import cloud.tamacat2.reverse.listener.TraceHttp1StreamListener;
 
 public class ReverseUrlConfig extends UrlConfig {
 
 	protected ReverseConfig reverse = new ReverseConfig();
 	protected Collection<ReverseConfig> reverses = new ArrayList<>();
+	protected Http1StreamListener streamListener = new TraceHttp1StreamListener();
 	
 	public static ReverseUrlConfig create() {
 		return new ReverseUrlConfig();
@@ -48,4 +52,13 @@ public class ReverseUrlConfig extends UrlConfig {
 		this.path = path;
 		return this;
 	}
+	
+    public ReverseUrlConfig streamListener(final Http1StreamListener streamListener) {
+        this.streamListener = streamListener;
+        return this;
+    }
+    
+    public Http1StreamListener getStreamListener() {
+        return streamListener;
+    }
 }
