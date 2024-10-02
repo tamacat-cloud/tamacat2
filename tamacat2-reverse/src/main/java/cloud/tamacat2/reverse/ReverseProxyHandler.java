@@ -45,7 +45,6 @@ import cloud.tamacat2.httpd.util.AccessLogUtils;
 import cloud.tamacat2.reverse.config.ReverseConfig;
 import cloud.tamacat2.reverse.config.ReverseUrlConfig;
 import cloud.tamacat2.reverse.listener.TraceConnPoolListener;
-import cloud.tamacat2.reverse.listener.TraceHttp1StreamListener;
 import cloud.tamacat2.reverse.util.ReverseUtils;
 
 /**
@@ -163,7 +162,7 @@ public class ReverseProxyHandler implements HttpRequestHandler {
 	
 	protected RequesterBootstrap createRequesterBootstrap() {
 		return RequesterBootstrap.bootstrap().setConnPoolListener(new TraceConnPoolListener())
-				.setStreamListener(new TraceHttp1StreamListener()).setMaxTotal(urlConfig.getHttpConfig().getMaxTotal())
+				.setStreamListener(urlConfig.getStreamListener()).setMaxTotal(urlConfig.getHttpConfig().getMaxTotal())
 				.setDefaultMaxPerRoute(urlConfig.getHttpConfig().getMaxParRoute());
 	}	
 }
