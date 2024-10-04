@@ -17,6 +17,7 @@ package cloud.tamacat2.tomcat;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.catalina.startup.Tomcat;
 import org.slf4j.Logger;
@@ -36,13 +37,15 @@ public class TomcatManager implements PluginServer {
 	public static TomcatManager getInstance() {
 		return SELF;
 	}
+	
+	final ReentrantLock lock = new ReentrantLock();
 		
 	/**
 	 * The instance corresponding to a port is returned. 
 	 * @param port
 	 * @return Server instance
 	 */
-	public synchronized Tomcat getTomcat(int port) {
+	public Tomcat getTomcat(final int port) {
 		return getTomcat(null, port);
 	}
 	
@@ -51,20 +54,25 @@ public class TomcatManager implements PluginServer {
 	 * @param port
 	 * @return Server instance
 	 */
-	public synchronized Tomcat getTomcat(String host, int port) {
-		Tomcat instance = MANAGER.get(port);
-		if (instance == null) {
-			if (StringUtils.isNotEmpty(host)) {
-				instance = new Tomcat();//(InetSocketAddress.createUnresolved(host, port));
-				instance.setHostname(host);
-				instance.setPort(port);
-			} else {
-				instance = new Tomcat();
-				instance.setPort(port);
+	public Tomcat getTomcat(final String host, final int port) {
+		lock.lock();
+		try {
+			Tomcat instance = MANAGER.get(port);
+			if (instance == null) {
+				if (StringUtils.isNotEmpty(host)) {
+					instance = new Tomcat();//(InetSocketAddress.createUnresolved(host, port));
+					instance.setHostname(host);
+					instance.setPort(port);
+				} else {
+					instance = new Tomcat();
+					instance.setPort(port);
+				}
+				MANAGER.put(port, instance);
 			}
-			MANAGER.put(port, instance);
+			return instance;
+		} finally {
+			lock.unlock();
 		}
-		return instance;
 	}
 	
 	
@@ -82,7 +90,7 @@ public class TomcatManager implements PluginServer {
 	 * Stop the all Server instances.
 	 */
 	public void stop() {
-		for (Tomcat instance : MANAGER.values()) {
+		for (final Tomcat instance : MANAGER.values()) {
 			try {
 				instance.stop();
 			} catch (Exception e) {
@@ -98,7 +106,7 @@ public class TomcatManager implements PluginServer {
 	 */
     static class TomcatThread extends Thread {
     	final Tomcat tomcat;
-    	TomcatThread(Tomcat tomcat) {
+    	TomcatThread(final Tomcat tomcat) {
     		this.tomcat = tomcat;
     	}
     	

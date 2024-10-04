@@ -36,7 +36,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssZ</maven.build.timestamp.format>
-    <junit.jupiter.version>5.10.4</junit.jupiter.version>
+    <junit.jupiter.version>5.10.5</junit.jupiter.version>
     <buildDate>${maven.build.timestamp}</buildDate>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>

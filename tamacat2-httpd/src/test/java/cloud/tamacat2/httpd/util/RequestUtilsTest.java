@@ -99,9 +99,13 @@ public class RequestUtilsTest {
 	}
 
 	@Test
-	public void testSetParameters() throws Exception {
-		ClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/test.html");
-		RequestUtils.parseParameters(request, new StringEntity("<html></html>"), StandardCharsets.UTF_8);
+	public void testParseParameters() throws Exception {
+		ClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/test.html?key1=value1&key2=");
+		RequestParameters params = RequestUtils.parseParameters(request, new StringEntity("<html></html>"), StandardCharsets.UTF_8);
+		
+		assertEquals("value1", params.getParameter("key1"));
+		assertEquals("", params.getParameter("key2"));
+		assertEquals(null, params.getParameter("key3"));
 	}
 
 	@Test

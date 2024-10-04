@@ -133,7 +133,8 @@ public class HeaderUtilsTest {
 		cookie.setPath("/");
 		cookie.setMaxAge(0);
 		//System.out.println(HeaderUtils.getSetCookieValue(cookie, true, true));
-		assertTrue(HeaderUtils.getSetCookieValue(cookie, true, true).startsWith("TestSession=; Path=/; HttpOnly; Secure; Max-Age=0; Expires=Tue, 20 Jan 1970"));
+		assertTrue(HeaderUtils.getSetCookieValue(cookie, true, true)
+			.startsWith("TestSession=; Path=/; HttpOnly; Secure; Max-Age=0; Expires=Wed, 21 Jan 1970 00:01:09 GMT"));
 	}
 
 	@Test
