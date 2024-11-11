@@ -84,8 +84,9 @@ public class WebServer {
 		}
 	}
 	
-	public void addPluginServer(final PluginServer pluginServer) {
+	public WebServer addPluginServer(final PluginServer pluginServer) {
 		pluginServers.add(pluginServer);
+		return this;
 	}
 	
 	protected void startPluginServers() {

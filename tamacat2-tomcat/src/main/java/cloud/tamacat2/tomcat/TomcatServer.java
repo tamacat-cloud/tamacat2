@@ -20,6 +20,7 @@ import org.apache.hc.core5.http.impl.bootstrap.CustomServerBootstrap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import cloud.tamacat2.httpd.config.UrlConfig;
 import cloud.tamacat2.reverse.ReverseProxy;
@@ -35,6 +36,9 @@ public class TomcatServer extends ReverseProxy {
 	static final Logger LOG = LoggerFactory.getLogger(TomcatServer.class);
 	
 	public TomcatServer() {
+		SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+        
 		addPluginServer(TomcatManager.getInstance());
 	}
 

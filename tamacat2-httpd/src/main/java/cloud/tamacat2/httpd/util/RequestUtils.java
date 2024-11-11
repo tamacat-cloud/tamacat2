@@ -27,6 +27,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
@@ -53,15 +54,15 @@ public class RequestUtils {
 
 	static final String CONTENT_TYPE_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
-	public static String getRequestLine(HttpRequest request) {
+	public static String getRequestLine(final HttpRequest request) {
 		return request.getMethod() + " "
 			+ request.getPath() + " "
 			+ request.getVersion();
 	}
 	
-	public static RequestLine getRequestLine(RequestLine requestline) {
-		String uri = requestline.getUri();
-		String path = getRequestPathWithQuery(uri);
+	public static RequestLine getRequestLine(final RequestLine requestline) {
+		final String uri = requestline.getUri();
+		final String path = getRequestPathWithQuery(uri);
 		if (uri.equals(path)) {
 			return requestline;
 		} else {
@@ -78,8 +79,8 @@ public class RequestUtils {
 	public static String getRequestPathWithQuery(final String uri) {
 		try {
 			if (uri.indexOf("http")==0 && uri.indexOf("://")>0) {
-				int idx = uri.indexOf("://");
-				String path = uri.substring(idx+3, uri.length());
+				final int idx = uri.indexOf("://");
+				final String path = uri.substring(idx+3, uri.length());
 				if (path.indexOf("/")>0) {
 					return path.substring(path.indexOf("/"), path.length());
 				}
@@ -90,46 +91,56 @@ public class RequestUtils {
 		return uri;
 	}
 
-	public static String getPath(String uri) {
-		int index = uri.indexOf('?');
-		if (index != -1) {
-			uri = uri.substring(0, index);
-		} else {
-			index = uri.indexOf('#');
-			if (index != -1) {
-				uri = uri.substring(0, index);
-			}
+	public static String getPath(final String uri) {
+		final int indexQ = uri.indexOf('?');
+		if (indexQ != -1) {
+			return uri.substring(0, indexQ);
+		}
+		
+		final int indexHash = uri.indexOf('#');
+		if (indexHash != -1) {
+			return uri.substring(0, indexHash);
 		}
 		return uri;
 	}
 
-	public static RequestParameters parseParameters(HttpRequest request, HttpEntity entity, HttpContext context, Charset encoding) {
-		synchronized (context) {
-			RequestParameters parameters = (RequestParameters) context.getAttribute(HTTP_REQUEST_PARAMETERS);
+	final static ReentrantLock lock = new ReentrantLock();
+	
+	@Deprecated
+	public static RequestParameters parseParameters(
+			final HttpRequest request, final HttpEntity entity,
+			final HttpContext context, final Charset encoding) {
+		lock.lock();
+		try {
+			final RequestParameters parameters = (RequestParameters) context.getAttribute(HTTP_REQUEST_PARAMETERS);
 			if (parameters == null) {
 				try {
-					parameters = parseParameters(request, entity, encoding);
-					context.setAttribute(HTTP_REQUEST_PARAMETERS, parameters);
+					RequestParameters parsed = parseParameters(request, entity, encoding);
+					context.setAttribute(HTTP_REQUEST_PARAMETERS, parsed);
+					return parsed;
 				} catch (Exception e) {
 					//BAD REQUEST.
 					LOG.warn(e.getMessage());
 				}
 			}
 			return parameters;
+		} finally {
+			lock.unlock();
 		}
 	}
 	
-	public static RequestParameters parseParameters(HttpRequest request, HttpEntity entity, Charset encoding) {
-		RequestParameters parameters = new RequestParameters();
-		String path = request.getPath();
+	public static RequestParameters parseParameters(
+			final HttpRequest request, final HttpEntity entity, final Charset encoding) {
+		final RequestParameters parameters = new RequestParameters();
+		final String path = request.getPath();
 		if (path.indexOf('?') >= 0) {
-			String[] requestParams = StringUtils.split(path, "?");
+			final String[] requestParams = StringUtils.split(path, "?");
 			//set request parameters for Custom HttpRequest.
 			if (requestParams.length >= 2) {
-				String params = requestParams[1];
-				String[] param = StringUtils.split(params, "&");
+				final String params = requestParams[1];
+				final String[] param = StringUtils.split(params, "&");
 				for (String kv : param) {
-					String[] p = StringUtils.split(kv, "=");
+					final String[] p = StringUtils.split(kv, "=");
 					if (p.length >=2) {
 						try {
 							parameters.setParameter(p[0], URLDecoder.decode(p[1], encoding));
@@ -143,20 +154,20 @@ public class RequestUtils {
 		}
 		if (entity != null && RequestUtils.isFormUrlEncoded(request)) {
 			if (entity != null) {
-				try (BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()))) {
+				try (final BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent()))) {
 					String s;
-					StringBuilder sb = new StringBuilder();
+					final StringBuilder sb = new StringBuilder();
 					while ((s = reader.readLine()) != null) {
 						sb.append(s);
 					}
-					String requestBody = sb.toString();
+					final String requestBody = sb.toString();
 					//for Reuse handler
 					
 					//getHttpEntityEnclosingRequest(request).setEntity(new StringEntity(requestBody, encoding));
 					
-					String[] params = StringUtils.split(requestBody, "&");
-					for (String param : params) {
-						String[] keyValue = StringUtils.split(param, "=");
+					final String[] params = StringUtils.split(requestBody, "&");
+					for (final String param : params) {
+						final String[] keyValue = StringUtils.split(param, "=");
 						if (keyValue.length >= 2) {
 							try {
 								parameters.setParameter(keyValue[0],
@@ -175,40 +186,43 @@ public class RequestUtils {
 		return parameters;
 	}
 	
-	public static void setParameter(HttpContext context, String name, String... values) {
-		RequestParameters parameters = getParameters(context);
+	public static void setParameter(final HttpContext context, final String name, final String... values) {
+		final RequestParameters parameters = getParameters(context);
 		parameters.setParameter(name, values);
 	}
 
-	public static void setParameters(HttpContext context, RequestParameters parameters) {
+	public static void setParameters(final HttpContext context, final RequestParameters parameters) {
 		context.setAttribute(HTTP_REQUEST_PARAMETERS, parameters);
 	}
 
 	/**
 	 * Get Request parameters
 	 * @since 1.4
+	 * @deprecated
 	 */
-	public static RequestParameters getParameters(HttpRequest request, HttpEntity entity, HttpContext context, Charset encoding) {
+	public static RequestParameters getParameters(
+			final HttpRequest request, final HttpEntity entity,
+			final HttpContext context, final Charset encoding) {
 		parseParameters(request, entity, context, encoding);
 		return getParameters(context);
 	}
 	
-	public static RequestParameters getParameters(HttpContext context) {
+	public static RequestParameters getParameters(final HttpContext context) {
 		return (RequestParameters) context.getAttribute(HTTP_REQUEST_PARAMETERS);
 	}
 
-	public static String getParameter(HttpContext context, String name) {
-		RequestParameters params = getParameters(context);
+	public static String getParameter(final HttpContext context, final String name) {
+		final RequestParameters params = getParameters(context);
 		return params != null ? params.getParameter(name) : null;
 	}
 
-	public static String[] getParameters(HttpContext context, String name) {
-		RequestParameters params = getParameters(context);
+	public static String[] getParameters(final HttpContext context, final String name) {
+		final RequestParameters params = getParameters(context);
 		return params != null ? params.getParameters(name) : null;
 	}
 
-	public static Set<String> getParameterNames(HttpContext context) {
-		RequestParameters params = getParameters(context);
+	public static Set<String> getParameterNames(final HttpContext context) {
+		final RequestParameters params = getParameters(context);
 		return params != null ? params.getParameterNames() : null;
 	}
 
@@ -217,7 +231,7 @@ public class RequestUtils {
 	 * @param context
 	 * @param conn instance of HttpInetConnection
 	 */
-	public static void setRemoteAddress(HttpContext context, HttpServerConnection conn) {
+	public static void setRemoteAddress(final HttpContext context, final HttpServerConnection conn) {
 		context.setAttribute(REMOTE_ADDRESS, conn.getRemoteAddress());
 	}
 
@@ -228,7 +242,8 @@ public class RequestUtils {
 	 * @param useXFF Using X-Forwarded-For request header.
 	 * @return
 	 */
-	public static String getRemoteIPAddress(HttpRequest request, HttpContext context, boolean useXFF) {
+	public static String getRemoteIPAddressfinal(
+			final HttpRequest request, final HttpContext context, final boolean useXFF) {
 		return getRemoteIPAddress(request, context, useXFF, X_FORWARDED_FOR);
 	}
 	
@@ -240,7 +255,9 @@ public class RequestUtils {
 	 * @param forwardHeader ("X-Forwarded-For")
 	 * @return
 	 */
-	public static String getRemoteIPAddress(HttpRequest request, HttpContext context, boolean useXFF, String forwardHeader) {
+	public static String getRemoteIPAddress(
+			final HttpRequest request, final HttpContext context,
+			final boolean useXFF, final String forwardHeader) {
 		String ip = null;
 		if (useXFF) {
 			ip = getForwardedForLastValue(request, forwardHeader);
@@ -256,14 +273,14 @@ public class RequestUtils {
 	 * @param context
 	 * @return
 	 */
-	public static String getRemoteIPAddress(HttpContext context) {
-		InetAddress address = (InetAddress) context.getAttribute(REMOTE_ADDRESS);
+	public static String getRemoteIPAddress(final HttpContext context) {
+		final InetAddress address = (InetAddress) context.getAttribute(REMOTE_ADDRESS);
 		if (address != null) return address.getHostAddress();
 		else return "";
 	}
 
-	public static boolean isRemoteIPv6Address(HttpContext context) {
-		InetAddress address = (InetAddress) context.getAttribute(REMOTE_ADDRESS);
+	public static boolean isRemoteIPv6Address(final HttpContext context) {
+		final InetAddress address = (InetAddress) context.getAttribute(REMOTE_ADDRESS);
 		if (address != null && address instanceof Inet6Address) {
 			return true;
 		} else {
@@ -277,7 +294,7 @@ public class RequestUtils {
 	 * @param forwardHeader
 	 * @since 1.5-20230629
 	 */
-	public static String getForwardedForValue(HttpRequest request, String forwardHeader) {
+	public static String getForwardedForValue(final HttpRequest request, final String forwardHeader) {
 		return HeaderUtils.getHeader(request, StringUtils.isNotEmpty(forwardHeader)? forwardHeader : X_FORWARDED_FOR);
 	}
 
@@ -287,10 +304,10 @@ public class RequestUtils {
 	 * @param forwardHeader
 	 * @since 1.5-20230629
 	 */
-	public static String getForwardedForFirstValue(HttpRequest request, String forwardHeader) {
-		String value = getForwardedForValue(request, forwardHeader);
+	public static String getForwardedForFirstValue(final HttpRequest request, final String forwardHeader) {
+		final String value = getForwardedForValue(request, forwardHeader);
 		if (StringUtils.isNotEmpty(value)) {
-			String[] address = StringUtils.split(value, ",");
+			final String[] address = StringUtils.split(value, ",");
 			if (address.length >= 1) {
 				return address[0];
 			}
@@ -304,10 +321,10 @@ public class RequestUtils {
 	 * @param forwardHeader
 	 * @since 1.5-20230629
 	 */
-	public static String getForwardedForLastValue(HttpRequest request, String forwardHeader) {
-		String value = getForwardedForValue(request, forwardHeader);
+	public static String getForwardedForLastValue(final HttpRequest request, final String forwardHeader) {
+		final String value = getForwardedForValue(request, forwardHeader);
 		if (StringUtils.isNotEmpty(value)) {
-			String[] address = StringUtils.split(value, ",");
+			final String[] address = StringUtils.split(value, ",");
 			if (address.length >= 1) {
 				return address[address.length -1];
 			}
@@ -320,14 +337,14 @@ public class RequestUtils {
 	 * @param request
 	 * @param context
 	 */
-	public static String getRequestHost(HttpRequest request, HttpContext context) {
-		Header hostHeader = request.getFirstHeader(HttpHeaders.HOST);
+	public static String getRequestHost(final HttpRequest request, final HttpContext context) {
+		final Header hostHeader = request.getFirstHeader(HttpHeaders.HOST);
 		if (hostHeader != null) {
-			String hostName = hostHeader.getValue();
+			final String hostName = hostHeader.getValue();
 			if (hostName != null && hostName.indexOf(':') >= 0) {
 				String[] hostAndPort = StringUtils.split(hostName, ":");
 				if (hostAndPort.length >= 2) {
-					hostName = hostAndPort[0];
+					return hostAndPort[0];
 				}
 			}
 			return hostName;
@@ -336,21 +353,21 @@ public class RequestUtils {
 	}
 
 	public static String getRequestHostURL(
-			HttpRequest request, HttpContext context, UrlConfig url) {
-		URL host = getRequestURL(request, context, url);
+			final HttpRequest request, final HttpContext context, final UrlConfig url) {
+		final URL host = getRequestURL(request, context, url);
 		return host != null ? host.getProtocol()
 				+ "://" + host.getAuthority() : null;
 	}
 
-	public static URL getRequestURL(HttpRequest request, HttpContext context) {
+	public static URL getRequestURL(final HttpRequest request, final HttpContext context) {
 		return getRequestURL(request, context, null);
 	}
 
-	public static URL getRequestURL(HttpRequest request, HttpContext context, UrlConfig url) {
+	public static URL getRequestURL(final HttpRequest request, final HttpContext context, final UrlConfig url) {
 		String protocol = "http";
 		String hostName = null;
 		int port = -1;
-		Header hostHeader = request.getFirstHeader(HttpHeaders.HOST);
+		final Header hostHeader = request.getFirstHeader(HttpHeaders.HOST);
 		if (hostHeader != null) {
 			hostName = hostHeader.getValue();
 			if (hostName != null && hostName.indexOf(':') >= 0) {
@@ -362,7 +379,7 @@ public class RequestUtils {
 			}
 		}
 		if (url != null) {
-			URL configureHost = url.getHost();
+			final URL configureHost = url.getHost();
 			if (configureHost != null) {
 				protocol = configureHost.getProtocol();
 				if (hostName == null) {
@@ -373,7 +390,7 @@ public class RequestUtils {
 				protocol = "https";
 			}
 			if (hostName != null && hostName.indexOf(':') >= 0) {
-				String[] hostAndPort = StringUtils.split(hostName, ":");
+				final String[] hostAndPort = StringUtils.split(hostName, ":");
 				if (hostAndPort.length >= 2) {
 					hostName = hostAndPort[0];
 					port = StringUtils.parse(hostAndPort[1],-1);
@@ -399,7 +416,7 @@ public class RequestUtils {
 		}
 		if (hostName != null) {
 			try {
-				URI path = new URI(request.getPath());
+				final URI path = new URI(request.getPath());
 				return new URI(protocol, null, hostName, port, path.getPath(), path.getQuery(), path.getFragment()).toURL();
 			} catch (Exception e) {
 			}
@@ -413,7 +430,7 @@ public class RequestUtils {
 	 * @param encoding
 	 * @return
 	 */
-	static String decode(String value, String encoding) {
+	static String decode(final String value, final String encoding) {
 		String decode = null;
 		try {
 			decode = URLDecoder.decode(value, encoding);
@@ -423,17 +440,17 @@ public class RequestUtils {
 		return decode;
 	}
 
-	public static InputStream getInputStream(HttpEntity entity) throws IOException {
+	public static InputStream getInputStream(final HttpEntity entity) throws IOException {
 		//HttpEntity entity = getEntity(request);
 		return entity != null? entity.getContent() : null;
 	}
 
-	public static boolean isFormUrlEncoded(HttpRequest request) {
+	public static boolean isFormUrlEncoded(final HttpRequest request) {
 		return HeaderUtils.isFormUrlEncoded(
 				HeaderUtils.getHeader(request, HttpHeaders.CONTENT_TYPE));
 	}
 	
-	public static boolean isMultipart(HttpRequest request) {
+	public static boolean isMultipart(final HttpRequest request) {
 		if ("post".equalsIgnoreCase(request.getMethod())) {
 			return HeaderUtils.isMultipart(
 				HeaderUtils.getHeader(request, HttpHeaders.CONTENT_TYPE));
@@ -441,8 +458,8 @@ public class RequestUtils {
 		return false;
 	}
 
-	public static String getPathPrefix(HttpRequest request) {
-		String path = request.getPath();
+	public static String getPathPrefix(final HttpRequest request) {
+		final String path = request.getPath();
 		int idx = path.lastIndexOf("/");
 		if (idx >=0) {
 			return path.substring(0, idx) + "/";

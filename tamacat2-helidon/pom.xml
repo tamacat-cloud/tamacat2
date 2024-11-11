@@ -20,7 +20,7 @@
   </licenses>
 
   <properties>
-    <helidon-microprofile.version>3.2.9</helidon-microprofile.version>
+    <helidon-microprofile.version>4.1.3</helidon-microprofile.version>
   </properties>
   
   <dependencies>
@@ -33,6 +33,11 @@
     <dependency>
       <groupId>io.helidon.microprofile.server</groupId>
       <artifactId>helidon-microprofile-server</artifactId>
+      <version>${helidon-microprofile.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.helidon.microprofile.bundles</groupId>
+      <artifactId>helidon-microprofile</artifactId>
       <version>${helidon-microprofile.version}</version>
     </dependency>
   </dependencies>

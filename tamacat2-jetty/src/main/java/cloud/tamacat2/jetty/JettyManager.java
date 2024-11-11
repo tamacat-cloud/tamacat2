@@ -18,6 +18,7 @@ package cloud.tamacat2.jetty;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
@@ -33,17 +34,19 @@ public class JettyManager implements PluginServer {
 	static final Map<Integer, Server> MANAGER = new HashMap<>();
 	
 	static final JettyManager SELF = new JettyManager();
-	
+		
 	public static JettyManager getInstance() {
 		return SELF;
 	}
+	
+	final ReentrantLock lock = new ReentrantLock();
 		
 	/**
 	 * The instance corresponding to a port is returned. 
 	 * @param port
 	 * @return Server instance
 	 */
-	public synchronized Server getServer(int port) {
+	public Server getServer(final int port) {
 		return getServer(null, port);
 	}
 	
@@ -52,17 +55,22 @@ public class JettyManager implements PluginServer {
 	 * @param port
 	 * @return Server instance
 	 */
-	public synchronized Server getServer(String host, int port) {
-		Server instance = MANAGER.get(port);
-		if (instance == null) {
-			if (StringUtils.isNotEmpty(host)) {
-				instance = new Server(InetSocketAddress.createUnresolved(host, port));
-			} else {
-				instance = new Server(port);
+	public Server getServer(final String host, final int port) {
+		lock.lock();
+		try { 
+			Server instance = MANAGER.get(port);
+			if (instance == null) {
+				if (StringUtils.isNotEmpty(host)) {
+					instance = new Server(InetSocketAddress.createUnresolved(host, port));
+				} else {
+					instance = new Server(port);
+				}
+				MANAGER.put(port, instance);
 			}
-			MANAGER.put(port, instance);
+			return instance;
+		} finally {
+			lock.unlock();
 		}
-		return instance;
 	}
 	
 	
@@ -70,8 +78,8 @@ public class JettyManager implements PluginServer {
 	 * Start the all Server instances.
 	 */
 	public void start() {
-		for (Server server : MANAGER.values()) {
-			JettyThread jetty = new JettyThread(server);
+		for (final Server server : MANAGER.values()) {
+			final JettyThread jetty = new JettyThread(server);
 			jetty.start();
 		}
 	}
@@ -80,7 +88,7 @@ public class JettyManager implements PluginServer {
 	 * Stop the all Server instances.
 	 */
 	public void stop() {
-		for (Server instance : MANAGER.values()) {
+		for (final Server instance : MANAGER.values()) {
 			try {
 				instance.stop();
 			} catch (Exception e) {
@@ -96,7 +104,7 @@ public class JettyManager implements PluginServer {
 	 */
     static class JettyThread extends Thread {
     	final Server server;
-    	JettyThread(Server server) {
+    	JettyThread(final Server server) {
     		this.server = server;
     	}
     	
