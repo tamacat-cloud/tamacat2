@@ -76,11 +76,15 @@ public class WebServerDirectoryFileListHandler extends WebServerHandler {
 			final EndpointDetails endpoint = coreContext.getEndpointDetails();
 			
 			final String path = requestUri.getPath();
-			if (StringUtils.isEmpty(path) || path.contains("..")) {
+			if (StringUtils.isEmpty(path)) {
+				throw new NotFoundException();
+			}
+			// Normalize the path and ensure it remains within docsRoot
+			final File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/")).getCanonicalFile();
+			if (!file.getPath().startsWith(new File(docsRoot).getCanonicalPath() + File.separator)) {
 				throw new NotFoundException();
 			}
 			ContentType contentType = ContentType.DEFAULT_BINARY;
-			final File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/"));
 			if (!file.exists()) {
 				LOG.debug(endpoint + ": Not found. file=" + file.getPath());
 				throw new NotFoundException();
