@@ -85,7 +85,7 @@ public class WebServerHandler implements HttpRequestHandler {
             final ClassicHttpRequest request,
             final ClassicHttpResponse response,
             final HttpContext context) throws HttpException, IOException {
-		long startTime = System.currentTimeMillis();
+		final long startTime = System.currentTimeMillis();
 		try {
 			//If docsRoot is null then always return 404 Not Found.
 			if (docsRoot == null) {
@@ -136,7 +136,7 @@ public class WebServerHandler implements HttpRequestHandler {
 
 	protected void handleException(final HttpRequest req, final HttpResponse resp, final HttpContext context,
 			final HttpStatusException e) throws HttpException, IOException {
-		String accept = HeaderUtils.getHeader(req, HttpHeaders.ACCEPT);
+		final String accept = HeaderUtils.getHeader(req, HttpHeaders.ACCEPT);
 		if (accept != null && accept.startsWith(ContentType.APPLICATION_JSON.getMimeType())) {
 			setEntity(resp, new StringEntity(ErrorPageTemplate.create().getJson(e), ContentType.APPLICATION_JSON));	
 		} else {
@@ -152,7 +152,7 @@ public class WebServerHandler implements HttpRequestHandler {
 	}
 	
 	protected String getDecodeUri(final String uri) {
-		String decoded = URLDecoder.decode(uri, StandardCharsets.UTF_8);
+		final String decoded = URLDecoder.decode(uri, StandardCharsets.UTF_8);
 		if (StringUtils.isEmpty(decoded) || decoded.contains("..")) {
 			throw new NotFoundException();
 		}

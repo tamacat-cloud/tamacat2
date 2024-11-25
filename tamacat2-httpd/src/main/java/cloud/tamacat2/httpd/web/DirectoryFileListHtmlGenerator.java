@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import cloud.tamacat2.httpd.util.DateUtils;
+import cloud.tamacat2.httpd.util.HtmlUtils;
 
 public class DirectoryFileListHtmlGenerator {
 
@@ -82,20 +83,16 @@ public class DirectoryFileListHtmlGenerator {
 			+ "      </tr>\r\n";
 	
 	public String html(final Collection<File> files) {
-		StringBuilder html = new StringBuilder()
+		final StringBuilder html = new StringBuilder()
 				.append(htmlStart)
 				.append(tableStart)
 				.append(parentLinkRow);
 		
-		for (File file : files) {
-			String time = DateUtils.getTime(
-				new Date(file.lastModified()), dateFormat,
-				locale,
-				TimeZone.getTimeZone(timeZone)
+		for (final File file : files) {
+			final String time = HtmlUtils.escapeHtml(
+				DateUtils.getTime(new Date(file.lastModified()), dateFormat, locale, TimeZone.getTimeZone(timeZone))
 			);
-
-			String name = file.getName();
-			
+			final String name = HtmlUtils.escapeHtml(file.getName());
 			if (file.isDirectory()) {
 				html.append(
 				"      <tr class=\"row\">\r\n"

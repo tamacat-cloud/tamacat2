@@ -71,16 +71,16 @@ public class WebServerDirectoryFileListHandler extends WebServerHandler {
 			if (docsRoot == null) {
 				throw new NotFoundException();
 			}
-			URI requestUri = request.getUri();			
-			HttpCoreContext coreContext = HttpCoreContext.cast(context);
-			EndpointDetails endpoint = coreContext.getEndpointDetails();
+			final URI requestUri = request.getUri();			
+			final HttpCoreContext coreContext = HttpCoreContext.cast(context);
+			final EndpointDetails endpoint = coreContext.getEndpointDetails();
 			
-			String path = requestUri.getPath();
+			final String path = requestUri.getPath();
 			if (StringUtils.isEmpty(path) || path.contains("..")) {
 				throw new NotFoundException();
 			}
 			ContentType contentType = ContentType.DEFAULT_BINARY;
-			File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/"));
+			final File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/"));
 			if (!file.exists()) {
 				LOG.debug(endpoint + ": Not found. file=" + file.getPath());
 				throw new NotFoundException();
@@ -90,7 +90,7 @@ public class WebServerDirectoryFileListHandler extends WebServerHandler {
 				}
 				throw new ForbiddenException();
 			} else if (file.isDirectory()) {
-				File[] listFiles = file.listFiles(new FileFilter() {
+				final File[] listFiles = file.listFiles(new FileFilter() {
 					@Override
 					public boolean accept(File pathname) {
 						return ! pathname.isHidden()
@@ -98,15 +98,15 @@ public class WebServerDirectoryFileListHandler extends WebServerHandler {
 					}
 				});
 				Arrays.sort(listFiles, new FileSort());
-				Collection<File> files = Arrays.asList(listFiles);
-				String html = new DirectoryFileListHtmlGenerator().html(files);
+				final Collection<File> files = Arrays.asList(listFiles);
+				final String html = new DirectoryFileListHtmlGenerator().html(files);
 				setEntity(response, new StringEntity(html, ContentType.TEXT_HTML));
 				response.setCode(HttpStatus.SC_OK);
 				ACCESS.info(request+" 200 [OK]");
 				return;
 			}
 			
-			String mime = MimeUtils.getContentType(path);
+			final String mime = MimeUtils.getContentType(path);
 			if (contentType != null) {
 				contentType = ContentType.parse(mime);
 			}
