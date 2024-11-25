@@ -63,7 +63,7 @@ public class ReverseUtils {
 	static final String HEADER_PROPERTIES = "reverse-header.properties";
 	static final String DEFAULT_HEADER_PROPERTIES = "cloud/tamacat2/reverse/util/reverse-header.properties";
 	//Remove hop-by-hop request headers.
-	static final String DEFAULT_REMOVE_REQUEST_HEADERS = "removeHeaders=Content-Length,Transfer-Encoding,Accept-Encoding,Connection,Keep-Alive,Proxy-Authenticate,Proxy-Authorization,TE,Trailers,Upgrade,Range";
+	static final String DEFAULT_REMOVE_REQUEST_HEADERS = "Content-Length,Transfer-Encoding,Accept-Encoding,Connection,Keep-Alive,Proxy-Authenticate,Proxy-Authorization,TE,Trailers,Upgrade,Range";
 
 	//Remove hop-by-hop response headers.
 	static final String DEFAULT_REMOVE_RESPONSE_HEADERS = "Content-Type,Content-Encoding,Content-Length,Transfer-Encoding,Connection,Keep-Alive,TE,Trailers,Upgrade,Content-MD5";

@@ -64,7 +64,7 @@ public class GzipContentEncodingInterceptor implements HttpRequestInterceptor, H
 	public void process(final HttpRequest req, final EntityDetails entity, final HttpContext context)
 			throws HttpException, IOException {
 		//Get the Accept-Encoding header for HTTP/1.1
-		String acceptEncoding = HeaderUtils.getHeader(req, HttpHeaders.ACCEPT_ENCODING);
+		final String acceptEncoding = HeaderUtils.getHeader(req, HttpHeaders.ACCEPT_ENCODING);
 		if (req != null && req.getVersion().greaterEquals(HttpVersion.HTTP_1_1)) {
 			String ua = HeaderUtils.getHeader(req, "User-Agent");
 			if (ua != null && ua.indexOf("MSIE 6.0") >= 0) {
@@ -82,10 +82,10 @@ public class GzipContentEncodingInterceptor implements HttpRequestInterceptor, H
 			throw new IllegalArgumentException("HTTP context may not be null");
 		}
 		//HttpRequest req = (HttpRequest) context.getAttribute(HttpCoreContext.HTTP_REQUEST);
-		String codecs = (String) context.getAttribute(HEADER_ACCEPT_ENCODING);
+		final String codecs = (String) context.getAttribute(HEADER_ACCEPT_ENCODING);
 		if (StringUtils.isNotEmpty(codecs) && useCompress(resp.getFirstHeader(HttpHeaders.CONTENT_TYPE))) {
 			if (codecs != null && codecs.toLowerCase().contains(GZIP_CODEC)) {
-				GzipCompressingEntity gzipEntity = new GzipCompressingEntity((HttpEntity)entity);
+				final GzipCompressingEntity gzipEntity = new GzipCompressingEntity((HttpEntity)entity);
 				((HttpEntityContainer)resp).setEntity(gzipEntity);
 				resp.setHeader(HttpHeaders.CONTENT_ENCODING, GZIP_CODEC); //Content-Encoding:gzip
 				resp.setHeader(HttpHeaders.TRANSFER_ENCODING, "chunked"); //Transfer-Encoding:chunked
@@ -113,11 +113,11 @@ public class GzipContentEncodingInterceptor implements HttpRequestInterceptor, H
 	public void setContentType(final String contentType) {
 		contentTypes.clear();
 		if (StringUtils.isNotEmpty(contentType)) {
-			String[] csv = StringUtils.split(contentType, ",");
+			final String[] csv = StringUtils.split(contentType, ",");
 			for (String t : csv) {
 				contentTypes.add(t.toLowerCase());
 				useAll = false;
-				String[] types = StringUtils.split(StringUtils.split(t, ";")[0], "/");
+				final String[] types = StringUtils.split(StringUtils.split(t, ";")[0], "/");
 				if (types.length >= 2) {
 					contentTypes.add(types[1].toLowerCase());
 				}
@@ -137,12 +137,12 @@ public class GzipContentEncodingInterceptor implements HttpRequestInterceptor, H
 	 */
 	public boolean useCompress(final Header contentType) {
 		if (contentType == null) return false;
-		String type = contentType.getValue();
+		final String type = contentType.getValue();
 		if (useAll || contentTypes.contains(type)) {
 			return true;
 		} else {
 			//Get the content sub type. (text/html; charset=UTF-8 -> html)
-			String[] types = type != null ? type.split(";")[0].split("/") : new String[0];
+			final String[] types = type != null ? type.split(";")[0].split("/") : new String[0];
 			if (types.length >= 2 && contentTypes.contains(types[1])) {
 				return true;
 			} else {
@@ -184,7 +184,7 @@ public class GzipContentEncodingInterceptor implements HttpRequestInterceptor, H
 			if (outstream == null) {
 				throw new IllegalArgumentException("Output stream may not be null");
 			}
-			GZIPOutputStream gzip = new GZIPOutputStream(outstream);
+			final GZIPOutputStream gzip = new GZIPOutputStream(outstream);
 			try {
 				wrappedEntity.writeTo(gzip);
 			} finally {
