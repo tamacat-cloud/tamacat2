@@ -66,6 +66,7 @@ public class WebServerDirectoryFileListHandler extends WebServerHandler {
             final ClassicHttpRequest request,
             final ClassicHttpResponse response,
             final HttpContext context) throws HttpException, IOException {
+		ContentType contentType = ContentType.DEFAULT_BINARY;
 		try {
 			//If docsRoot is null then always return 404 Not Found.
 			if (docsRoot == null) {
@@ -76,11 +77,11 @@ public class WebServerDirectoryFileListHandler extends WebServerHandler {
 			final EndpointDetails endpoint = coreContext.getEndpointDetails();
 			
 			final String path = requestUri.getPath();
-			if (StringUtils.isEmpty(path) || path.contains("..")) {
+			if (StringUtils.isEmpty(path)) {
 				throw new NotFoundException();
 			}
-			ContentType contentType = ContentType.DEFAULT_BINARY;
-			final File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/"));
+			// Normalize the path and ensure it remains within docsRoot
+			final File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/")).getCanonicalFile();
 			if (!file.exists()) {
 				LOG.debug(endpoint + ": Not found. file=" + file.getPath());
 				throw new NotFoundException();
