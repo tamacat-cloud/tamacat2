@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -66,7 +67,7 @@ public class WebServerHandler implements HttpRequestHandler {
 	protected Properties props;
 
 	protected UrlConfig urlConfig;
-	protected File docsRoot;
+	protected Path docsRoot;
 	protected HttpStatusException defaultException = new NotFoundException();
 	
 	public WebServerHandler(final UrlConfig urlConfig) {
@@ -76,7 +77,7 @@ public class WebServerHandler implements HttpRequestHandler {
 
 	public WebServerHandler(final String docsRoot) {
 		if (docsRoot != null) {
-			this.docsRoot = new File(docsRoot);
+			this.docsRoot = new File(docsRoot).toPath().normalize().toAbsolutePath();
 		}
 	}
 	
@@ -96,14 +97,15 @@ public class WebServerHandler implements HttpRequestHandler {
 			final EndpointDetails endpoint = coreContext.getEndpointDetails();
 			
 			String path = requestUri.getPath();
-			if (StringUtils.isEmpty(path) || path.contains("..")) {
+			if (StringUtils.isEmpty(path) || path.contains("..") || path.contains("\\")) {
 				throw new NotFoundException();
 			}
 			if (path.endsWith("/")) {
 				path = path + welcomeFile;
 			}
-			final File file = new File(docsRoot, getDecodeUri(path)
-				.replace(urlConfig.getPath(), "/")).getCanonicalFile();;
+			final File file = docsRoot.resolve(
+					docsRoot.toAbsolutePath()+getDecodeUri(path).replace(urlConfig.getPath(), "/")
+				).normalize().toAbsolutePath().toFile();
 			if (!file.exists()) {
 				//if (LOG.isTraceEnabled()) {
 					LOG.debug(endpoint + ": Not found. file=" + file.getPath());
