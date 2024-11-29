@@ -81,7 +81,9 @@ public class WebServerDirectoryFileListHandler extends WebServerHandler {
 				throw new NotFoundException();
 			}
 			// Normalize the path and ensure it remains within docsRoot
-			final File file = new File(docsRoot, getDecodeUri(path).replace(urlConfig.getPath(), "/")).getCanonicalFile();
+			final File file = docsRoot.resolve(
+					docsRoot.toAbsolutePath()+getDecodeUri(path).replace(urlConfig.getPath(), "/")
+				).normalize().toAbsolutePath().toFile();
 			if (!file.exists()) {
 				LOG.debug(endpoint + ": Not found. file=" + file.getPath());
 				throw new NotFoundException();
