@@ -77,7 +77,7 @@ public class WebServerDirectoryFileListHandler extends WebServerHandler {
 			final EndpointDetails endpoint = coreContext.getEndpointDetails();
 			
 			final String path = requestUri.getPath();
-			if (StringUtils.isEmpty(path)) {
+			if (StringUtils.isEmpty(path) || path.contains("..") || path.contains("\\")) {
 				throw new NotFoundException();
 			}
 			// Normalize the path and ensure it remains within docsRoot
