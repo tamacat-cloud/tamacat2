@@ -36,7 +36,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssZ</maven.build.timestamp.format>
-    <junit.jupiter.version>5.11.3</junit.jupiter.version>
+    <junit.jupiter.version>5.11.4</junit.jupiter.version>
     <buildDate>${maven.build.timestamp}</buildDate>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.12</version>
+      <version>1.5.16</version>
     </dependency>
     <!--
     <dependency>
@@ -84,7 +84,7 @@
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
-      <version>1.11.3</version>
+      <version>1.11.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
