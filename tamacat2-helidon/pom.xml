@@ -20,7 +20,7 @@
   </licenses>
 
   <properties>
-    <helidon-microprofile.version>4.2.1</helidon-microprofile.version>
+    <helidon-microprofile.version>4.2.2</helidon-microprofile.version>
   </properties>
   
   <dependencies>
@@ -71,13 +71,13 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.7.1</version>
         <configuration>
-          <finalName>tamacat2-httpd-${project.version}</finalName>
+          <finalName>tamacat2-helidon-${project.version}</finalName>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>cloud.tamacat2.httpd.WevServer</mainClass>
+              <mainClass>cloud.tamacat2.mp.MicroProfileServer</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -110,7 +110,7 @@
             <jvmFlags>
               <jvmFlag>-Dserver.home=/usr/local/tamacat2</jvmFlag>
             </jvmFlags>
-            <mainClass>cloud.tamacat2.httpd.WebServer</mainClass>
+            <mainClass>cloud.tamacat2.mp.MicroProfileServer</mainClass>
             <appRoot>/usr/local/tamacat2</appRoot>
             <!--
             <args>
