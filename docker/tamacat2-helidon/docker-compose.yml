@@ -1,0 +1,6 @@
+services:
+  tamacat2-helidon:
+    build: .
+    #image: tamacat/tamacat2:helidon-latest
+    ports:
+      - "8080:8080"
