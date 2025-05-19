@@ -8,9 +8,9 @@
 		<groupId>cloud.tamacat2</groupId>
 		<version>2.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>tamacat2-helidon</artifactId>
+	<artifactId>tamacat2-helidon-se</artifactId>
 	<packaging>jar</packaging>
-	<name>tamacat2-helidon</name>
+	<name>tamacat2-helidon-se</name>
 	<url>https://tamacat.cloud/</url>
 	<licenses>
 		<license>
@@ -21,7 +21,7 @@
 	</licenses>
 
 	<properties>
-		<helidon-microprofile.version>4.2.2</helidon-microprofile.version>
+		<helidon.version>4.2.2</helidon.version>
 	</properties>
 
 	<dependencies>
@@ -30,16 +30,15 @@
 			<artifactId>tamacat2-reverse</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
-			<groupId>io.helidon.microprofile.server</groupId>
-			<artifactId>helidon-microprofile-server</artifactId>
-			<version>${helidon-microprofile.version}</version>
+			<groupId>io.helidon.webserver</groupId>
+			<artifactId>helidon-webserver</artifactId>
+			<version>${helidon.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.helidon.microprofile.bundles</groupId>
-			<artifactId>helidon-microprofile</artifactId>
-			<version>${helidon-microprofile.version}</version>
+			<groupId>io.helidon.http.media</groupId>
+			<artifactId>helidon-http-media-jsonp</artifactId>
+			<version>${helidon.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -74,13 +73,13 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.7.1</version>
 				<configuration>
-					<finalName>tamacat2-helidon-${project.version}</finalName>
+					<finalName>tamacat2-helidon-se-${project.version}</finalName>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>cloud.tamacat2.mp.MicroProfileServer</mainClass>
+							<mainClass>cloud.tamacat2.helidon.se.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -103,7 +102,7 @@
 						<image>gcr.io/distroless/java21</image>
 					</from>
 					<to>
-						<image>tamacat/tamacat2-httpd</image>
+						<image>tamacat/tamacat2-helidon-se</image>
 						<tags>
 							<tag>2.0-${jib.build.tag}</tag>
 							<tag>2.0-latest</tag>
@@ -113,7 +112,7 @@
 						<jvmFlags>
 							<jvmFlag>-Dserver.home=/usr/local/tamacat2</jvmFlag>
 						</jvmFlags>
-						<mainClass>cloud.tamacat2.mp.MicroProfileServer</mainClass>
+						<mainClass>cloud.tamacat2.heidon.se.Main</mainClass>
 						<appRoot>/usr/local/tamacat2</appRoot>
 						<extraClasspath>/usr/local/tamacat2/conf</extraClasspath>
 						<workingDirectory>/usr/local/tamacat2</workingDirectory>
