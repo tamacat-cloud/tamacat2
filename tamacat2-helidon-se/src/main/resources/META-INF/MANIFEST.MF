@@ -1,0 +1,8 @@
+Automatic-Module-Name: tamacat2.helidon-se
+Implementation-Title: tamacat2-helidon-se
+Implementation-Version: 2.0-20250519
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: cloud.tamacat2.se
+Bundle-Name: tamacat2-helidon-se
+Bundle-Vendor: TAMACAT.ORG
+Bundle-Version: 2.0

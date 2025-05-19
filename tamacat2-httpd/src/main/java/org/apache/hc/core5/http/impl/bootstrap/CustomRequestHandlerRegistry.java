@@ -53,7 +53,6 @@ import org.apache.hc.core5.util.TextUtils;
  *
  * @since 5.0
  */
-@SuppressWarnings("deprecation")
 @Deprecated
 @Contract(threading = ThreadingBehavior.SAFE_CONDITIONAL)
 public class CustomRequestHandlerRegistry<T> implements HttpRequestMapper<T> {

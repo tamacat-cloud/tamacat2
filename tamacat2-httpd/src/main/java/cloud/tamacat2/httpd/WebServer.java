@@ -95,9 +95,7 @@ public class WebServer {
 		}
 	}
 	
-	public HttpServer createHttpServer(final HttpConfig config) {
-		final Collection<UrlConfig> configs = config.getUrlConfigs();
-
+	protected CustomServerBootstrap bootstrap(final HttpConfig config) {
 		final CustomServerBootstrap bootstrap = CustomServerBootstrap.bootstrap()
 				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
 				.setCanonicalHostName(config.getCanonicalHostName()) //Not authoritative
@@ -108,6 +106,13 @@ public class WebServer {
 				//.setSoReuseAddress(config.soReuseAddress())
 				//.setSoTimeout(config.getSoTimeout(), TimeUnit.SECONDS).build()
 				;
+		return bootstrap;
+	}
+	
+	public HttpServer createHttpServer(final HttpConfig config) {
+		final Collection<UrlConfig> configs = config.getUrlConfigs();
+
+		final CustomServerBootstrap bootstrap = bootstrap(config);
 		
 		// HTTPS
 		if (config.useHttps()) {
