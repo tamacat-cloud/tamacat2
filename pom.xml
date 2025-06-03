@@ -23,6 +23,7 @@
     <module>tamacat2-jetty-ee8</module>
     <module>tamacat2-tomcat</module>
     <module>tamacat2-helidon</module>
+    <module>tamacat2-helidon-se</module>
   </modules>
 
   <scm>
