@@ -21,7 +21,7 @@
 	</licenses>
 
 	<properties>
-		<helidon-microprofile.version>4.2.2</helidon-microprofile.version>
+		<helidon-microprofile.version>4.2.3</helidon-microprofile.version>
 	</properties>
 
 	<dependencies>
