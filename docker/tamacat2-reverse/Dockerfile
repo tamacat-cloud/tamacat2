@@ -1,4 +1,4 @@
-FROM maven:3.9.5-eclipse-temurin-21-alpine as BUILD
+FROM maven:3.9.11-eclipse-temurin-25-alpine as BUILD
 RUN apk update && apk upgrade && apk add --no-cache \
     bash \
     curl \
@@ -10,7 +10,7 @@ WORKDIR /build/tamacat2
 RUN --mount=type=cache,target=/root/.m2 mvn clean package
 
 ###################################################3
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:25-jdk-alpine
 
 RUN apk update && apk upgrade && apk add --no-cache \
     bash \

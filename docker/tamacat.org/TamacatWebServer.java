@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import cloud.tamacat2.httpd.WebServer;
 import cloud.tamacat2.httpd.config.HttpConfig;
 import cloud.tamacat2.httpd.config.UrlConfig;
-import cloud.tamacat2.httpd.filter.ClientIPAccessControlFilter;
 
 void main() {
 	new WebServer().startup(HttpConfig.create().port(8080)
-		.urlConfig(UrlConfig.create().path("/examples/")
-			.docsRoot("${server.home}/htdocs/")
-			.filter(new ClientIPAccessControlFilter().allow("127.0.0.1"))
+		.urlConfig(UrlConfig.create().host("tamacat.org")
+			.path("/").docsRoot("${server.home}/htdocs/tamacat.org/")
+		)
+		.urlConfig(UrlConfig.create().host("tamacat.org")
+			.path("/maven2/").docsRoot("${server.home}/htdocs/maven2/").directoryListing(true)
+		)
+		.urlConfig(UrlConfig.create().host("tamacat.cloud")
+			.path("/").docsRoot("${server.home}/htdocs/tamacat.cloud/")
+		)
+		.urlConfig(UrlConfig.create().host("localhost")
+			.path("/").docsRoot("${server.home}/htdocs/tamacat.cloud/")
+		)
+		.urlConfig(UrlConfig.create().host("localhost")
+			.path("/maven2/").docsRoot("${server.home}/htdocs/maven2/").directoryListing(true)
 		)
 		.contentEncoding("gzip")
 	);

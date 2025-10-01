@@ -4,7 +4,7 @@
 ## Features:
 - Support Embedded Jetty12 with Jakarta EE 10 (jakarta.servlet.*)
   - https://www.eclipse.org/jetty/
-- Required Java 21+ (JRE/JDK)
+- Required Java 25 (JRE/JDK)
 
 ## Getting Started:
 
@@ -16,8 +16,7 @@
   import cloud.tamacat2.jetty.JettyServer;
   import cloud.tamacat2.reverse.config.ReverseConfig;
 
-  public class JettyExamples {
-    public static void main(String[] args) {
+  void main(String[] args) {
       new JettyServer().startup(HttpConfig.create().port(80)
         .urlConfig(JettyUrlConfig.create()
           .path("/examples/")
@@ -26,7 +25,6 @@
           )
         )
       );
-    }
   }
   ```
 
@@ -40,7 +38,7 @@
   ```
 
 ### Execute
-- ex. Java21+ / JettyExamples.java
+- ex. Java25 / JettyExamples.java
   ```
   java -cp tamacat2-jetty-2.0-SNAPSHOT-jar-with-dependencies.jar JettyExamples.java
   ```

@@ -18,12 +18,10 @@ import cloud.tamacat2.reverse.ReverseProxy;
 import cloud.tamacat2.reverse.config.ReverseUrlConfig;
 import cloud.tamacat2.reverse.config.ReverseConfig;
 
-public class ReverseProxyExamples {
-	public static void main(String[] args) {
-		new ReverseProxy().startup(HttpConfig.create().port(8080)
-			.urlConfig(ReverseUrlConfig.create().path("/examples/")
-				.reverse(ReverseConfig.create().url("http://tomcat-examples:8080/examples/"))
-			)
-		);
-	}
+void main() {
+	new ReverseProxy().startup(HttpConfig.create().port(8080)
+		.urlConfig(ReverseUrlConfig.create().path("/examples/")
+			.reverse(ReverseConfig.create().url("http://tomcat-examples:8080/examples/"))
+		)
+	);
 }

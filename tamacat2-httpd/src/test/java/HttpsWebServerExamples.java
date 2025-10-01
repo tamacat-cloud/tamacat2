@@ -21,23 +21,21 @@ import cloud.tamacat2.httpd.config.UrlConfig;
 /**
  * https://localhost:8443/examples/
  */
-public class HttpsWebServerExamples {
-	public static void main(String[] args) {
-		new WebServer().startup(HttpConfig.create()
-			.port(8443)
-			.https(HttpsConfig.create()
-				.clientAuth(true)
-				.caKeyStoreFile("tamacat/cacerts")
-				.caKeyPassword("changeit")
-				.keyStoreFile("tamacat/localhost.p12")
-				.keyPassword("changeit")
-				.crl("tamacat/CRL.der")
-			)
-			
-			.urlConfig(UrlConfig.create().path("/examples/")
-				.docsRoot("${server.home}/htdocs/")
-			)
-			.contentEncoding("gzip")
-		);
-	}
+void main() {
+	new WebServer().startup(HttpConfig.create()
+		.port(8443)
+		.https(HttpsConfig.create()
+			.clientAuth(true)
+			.caKeyStoreFile("tamacat/cacerts")
+			.caKeyPassword("changeit")
+			.keyStoreFile("tamacat/localhost.p12")
+			.keyPassword("changeit")
+			.crl("tamacat/CRL.der")
+		)
+		
+		.urlConfig(UrlConfig.create().path("/examples/")
+			.docsRoot("${server.home}/htdocs/")
+		)
+		.contentEncoding("gzip")
+	);
 }

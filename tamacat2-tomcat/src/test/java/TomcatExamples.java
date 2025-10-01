@@ -17,10 +17,8 @@ import cloud.tamacat2.httpd.config.HttpConfig;
 import cloud.tamacat2.tomcat.TomcatServer;
 import cloud.tamacat2.tomcat.config.TomcatConfig;
 
-public class TomcatExamples {
-	public static void main(String[] args) {
-		new TomcatServer().startup(HttpConfig.create().port(8080).maxTotal(200).maxParRoute(20)
-			.urlConfig(TomcatConfig.create().contextPath("/examples").port(8081).path("/examples/"))
-		);
-	}
+void main() {
+	new TomcatServer().startup(HttpConfig.create().port(8080).maxTotal(200).maxParRoute(20)
+		.urlConfig(TomcatConfig.create().contextPath("/examples").port(8081).path("/examples/"))
+	);
 }

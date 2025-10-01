@@ -1,0 +1,13 @@
+{
+  "xss": [
+    "(?i)<script[^>]*>",
+    "(?i)on\\w+\\s*=\\s*['\"]",
+    "(?i)javascript:[^'\";]+"
+  ],
+  "sqlInjection": [
+    "(?i)(union|select|insert|update|delete|drop|truncate|--|#)",
+    "(?i)'\\s*(or|and)\\s*'",
+    "(?i)\\bexec\\b",
+    "(?i)\\bxp_cmdshell\\b"
+  ]
+}
