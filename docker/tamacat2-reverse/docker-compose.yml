@@ -4,8 +4,6 @@ services:
     #image: tamacat/tamacat2:reverse-latest
     ports:
       - "8080:8080"
-    links:
-      - tomcat-examples
   
   tomcat-examples:
     #image: tomcat:9.0
