@@ -11,7 +11,7 @@
 - tamacat2-jetty-ee8: Support Embedded Jetty 12 with Jakarta EE 8 (javax.servlet.*)
 - tamacat2-tomcat: Support Embedded Apache Tomcat 9.0 Servlet/JSP
 - tamacat2-helidon: Support Embedded Helidon MicroProfile Server
-- Required Java 21+ (JRE/JDK)
+- Required Java 25 (JRE/JDK)
 - Dependencies:
   - [Apache HttpComponents HttpCore 5.3](https://hc.apache.org/httpcomponents-core-5.3.x/index.html)
   - [SLF4J](https://www.slf4j.org/) + [Logback](https://logback.qos.ch/)

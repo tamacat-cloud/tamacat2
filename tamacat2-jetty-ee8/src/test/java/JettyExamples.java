@@ -17,10 +17,8 @@ import cloud.tamacat2.httpd.config.HttpConfig;
 import cloud.tamacat2.jetty.config.JettyUrlConfig;
 import cloud.tamacat2.jetty.JettyServer;
 
-public class JettyExamples {
-	public static void main(String[] args) {
-		new JettyServer().startup(HttpConfig.create().port(8080)
-			.urlConfig(JettyUrlConfig.create().useJSP(true).port(8081).path("/examples/"))
-		);
-	}
+void main() {
+	new JettyServer().startup(HttpConfig.create().port(8080)
+		.urlConfig(JettyUrlConfig.create().useJSP(true).port(8081).path("/examples/"))
+	);
 }

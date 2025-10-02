@@ -18,3 +18,9 @@ logs
 
 .DS_Store
 
+
+.vscode
+
+graalvm
+
+*/htdocs/maven2/*

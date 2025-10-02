@@ -4,7 +4,7 @@
 ## Features:
 - Customizable Reverse Proxy.
 - Dependencies: Apache HttpComponents httpcore5, SLF4J+Logback
-- Required Java 21+ (JRE/JDK)
+- Required Java 25 (JRE/JDK)
 
 ## Getting Started:
 
@@ -16,19 +16,17 @@
   import cloud.tamacat2.reverse.config.ReverseUrlConfig;
   import cloud.tamacat2.reverse.config.ReverseConfig;
 
-  public class ReverseProxyExamples {
-    public static void main(String[] args) {
+  void main() {
       new ReverseProxy().startup(HttpConfig.create().port(80)
         .urlConfig(ReverseUrlConfig.create().path("/examples/")
           .reverse(ReverseConfig.create().url("http://localhost:8080/examples/"))
         )
       );
-    }
   }
   ```
 
 ### Execute:
-- ex. Java21+ / ReverseProxyExamples.java
+- ex. Java25 / ReverseProxyExamples.java
   ```
   java -cp tamacat2-reverse-2.0-SNAPSHOT-jar-with-dependencies.jar ReverseProxyExamples.java
   ```

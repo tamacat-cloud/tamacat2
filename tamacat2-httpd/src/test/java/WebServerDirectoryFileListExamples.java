@@ -18,16 +18,14 @@ import cloud.tamacat2.httpd.WebServer;
 import cloud.tamacat2.httpd.config.HttpConfig;
 import cloud.tamacat2.httpd.config.UrlConfig;
 
-public class WebServerDirectoryFileListExamples {
-	public static void main(String[] args) {
-		new WebServer().startup(HttpConfig.create().port(8080)
-				.urlConfig(UrlConfig.create().path("/")
-					.docsRoot("${server.home}/htdocs/")
-				)
-				.urlConfig(UrlConfig.create().path("/maven2/").directoryListing(true)
-					.docsRoot("${server.home}/htdocs/maven2/")
+void main() {
+	new WebServer().startup(HttpConfig.create().port(8080)
+			.urlConfig(UrlConfig.create().path("/")
+				.docsRoot("${server.home}/htdocs/")
 			)
-			//.contentEncoding("gzip")
-		);
-	}
+			.urlConfig(UrlConfig.create().path("/maven2/").directoryListing(true)
+				.docsRoot("${server.home}/htdocs/maven2/")
+		)
+		//.contentEncoding("gzip")
+	);
 }

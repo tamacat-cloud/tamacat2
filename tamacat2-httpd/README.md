@@ -4,7 +4,7 @@
 ## Features:
 - Standard HTTP/HTTPS Web Server.
 - Dependencies: Apache HttpComponents httpcore5, SLF4J+Logback
-- Required Java 21+ (JRE/JDK)
+- Required Java 25 (JRE/JDK)
 
 ## Getting Started:
 
@@ -15,15 +15,13 @@
   import cloud.tamacat2.httpd.config.HttpConfig;
   import cloud.tamacat2.httpd.config.UrlConfig;
   
-  public class WebServerExamples {
-    public static void main(String[] args) {
+  void main() {
       new WebServer().startup(HttpConfig.create().port(8080)
         .urlConfig(UrlConfig.create().path("/examples/")
           .docsRoot("${server.home}/htdocs/")
         )
         .contentEncoding("gzip")
       );
-    }
   }
   ```
   - docsRoot(String path) ... Static Web Contents directory. (HTML/CSS/Images etc.)
@@ -32,7 +30,7 @@
 
 
 ### Execute:
-- ex. Java21+ / WebServerExamples.java
+- ex. Java25 / WebServerExamples.java
   ```
   java -cp tamacat2-httpd-2.0-SNAPSHOT-jar-with-dependencies.jar WebServerExamples.java
   ```
