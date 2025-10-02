@@ -1,0 +1,6 @@
+services:
+  tamacat2-httpd:
+    build: .
+    #image: tamacat/tamacat2:httpd-latest
+    ports:
+      - "8080:8080"
