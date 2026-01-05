@@ -22,6 +22,8 @@ public class TomcatConfig extends ReverseUrlConfig {
 	
 	String protocol = "http";
 	String hostname = "127.0.0.1";
+	String allowRemoteCIDRValve = "127.0.0.1/32";
+	
 	int port = 8080;
 	String contextPath;
 		
@@ -59,6 +61,15 @@ public class TomcatConfig extends ReverseUrlConfig {
 			this.contextPath = path.replace("/$","");
 		}
 		return this;
+	}
+	
+	public TomcatConfig allowRemoteCIDRValve(String allowRemoteCIDRValve) {
+		this.allowRemoteCIDRValve = allowRemoteCIDRValve;
+		return this;
+	}
+	
+	public String getAllowRemoteCIDRValve() {
+		return allowRemoteCIDRValve;
 	}
 	
 	public String getContextPath() {

@@ -20,7 +20,7 @@
   </licenses>
 
   <properties>
-    <jetty.version>12.0.28</jetty.version>
+    <jetty.version>12.0.31</jetty.version>
   </properties>
 
   <dependencies>
