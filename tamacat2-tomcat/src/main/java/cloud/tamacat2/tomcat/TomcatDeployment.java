@@ -81,7 +81,7 @@ public class TomcatDeployment {
 		if (useWarDeploy) {
 			deployWarFiles(tomcatConfig);
 		}
-
+		tomcatConfig.getConnectorProperties().forEach((k, v) -> tomcat.getConnector().setProperty(k, v));
 		deployWebapps(tomcatConfig);
 	}
 
