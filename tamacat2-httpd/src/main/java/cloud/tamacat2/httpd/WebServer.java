@@ -27,6 +27,7 @@ import org.apache.hc.core5.http.HttpResponseInterceptor;
 import org.apache.hc.core5.http.impl.HttpProcessors;
 import org.apache.hc.core5.http.impl.bootstrap.CustomServerBootstrap;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
 import org.apache.hc.core5.http.ssl.TLS;
@@ -95,6 +96,21 @@ public class WebServer {
 		}
 	}
 	
+	
+	protected ServerBootstrap serverBootstrap(final HttpConfig config) {
+		final ServerBootstrap bootstrap = ServerBootstrap.bootstrap()
+				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
+				.setCanonicalHostName(config.getCanonicalHostName()) //Not authoritative
+				.setListenerPort(config.getPort())
+				//.setStreamListener(new TraceHttp1StreamListener("client<-httpd"))
+				//.setSocketConfig(SocketConfig.custom()
+				//.setSoKeepAlive(config.keepAlive())
+				//.setSoReuseAddress(config.soReuseAddress())
+				//.setSoTimeout(config.getSoTimeout(), TimeUnit.SECONDS).build()
+				;
+		return bootstrap;
+	}
+	
 	protected CustomServerBootstrap bootstrap(final HttpConfig config) {
 		final CustomServerBootstrap bootstrap = CustomServerBootstrap.bootstrap()
 				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
@@ -113,6 +129,7 @@ public class WebServer {
 		final Collection<UrlConfig> configs = config.getUrlConfigs();
 
 		final CustomServerBootstrap bootstrap = bootstrap(config);
+		//final ServerBootstrap bootstrap = serverBootstrap(config);
 		
 		// HTTPS
 		if (config.useHttps()) {

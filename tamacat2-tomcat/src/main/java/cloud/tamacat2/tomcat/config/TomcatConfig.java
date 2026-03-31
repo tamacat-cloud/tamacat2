@@ -15,6 +15,9 @@
  */
 package cloud.tamacat2.tomcat.config;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.hc.core5.http.HttpHost;
 import cloud.tamacat2.reverse.config.ReverseUrlConfig;
 
@@ -26,7 +29,8 @@ public class TomcatConfig extends ReverseUrlConfig {
 	
 	int port = 8080;
 	String contextPath;
-		
+	Map<String, String> connectorProperties = new LinkedHashMap<>();
+	
 	public static TomcatConfig create() {
 		return new TomcatConfig();
 	}
@@ -66,6 +70,15 @@ public class TomcatConfig extends ReverseUrlConfig {
 	public TomcatConfig allowRemoteCIDRValve(String allowRemoteCIDRValve) {
 		this.allowRemoteCIDRValve = allowRemoteCIDRValve;
 		return this;
+	}
+	
+	public TomcatConfig param(String key, String value) {
+		connectorProperties.put(key, value);
+		return this;
+	}
+	
+	public Map<String, String> getConnectorProperties() {
+		return connectorProperties;
 	}
 	
 	public String getAllowRemoteCIDRValve() {
