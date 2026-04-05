@@ -4,6 +4,8 @@ import java.util.Locale;
 
 import org.apache.hc.core5.http.impl.EnglishReasonPhraseCatalog;
 
+import cloud.tamacat2.httpd.util.HtmlUtils;
+
 public class ErrorPageTemplate {
 
 	String html = """
@@ -50,19 +52,28 @@ public class ErrorPageTemplate {
 	}
 	
 	public String getHtml(final HttpStatusException exception) {
-		return getResponseBody(exception, html);
-	}
-	
-	public String getJson(final HttpStatusException exception) {
-		return getResponseBody(exception, json);
-	}
-	
-	protected String getResponseBody(final HttpStatusException exception, final String template) {
 		final String statusCode = String.valueOf(exception.getHttpStatus());
 		final String error = EnglishReasonPhraseCatalog.INSTANCE.getReason(exception.getHttpStatus(), Locale.US);
 		final String message = exception.getMessage();
-		return template.replace("${status}", statusCode)
-			.replace("${error}", error)
-			.replace("${message}", message != null ? message : "");
+		return html.replace("${status}", statusCode)
+			.replace("${error}", HtmlUtils.escapeHtml(error != null ? error : ""))
+			.replace("${message}", HtmlUtils.escapeHtml(message != null ? message : ""));
+	}
+
+	public String getJson(final HttpStatusException exception) {
+		final String statusCode = String.valueOf(exception.getHttpStatus());
+		final String error = EnglishReasonPhraseCatalog.INSTANCE.getReason(exception.getHttpStatus(), Locale.US);
+		final String message = exception.getMessage();
+		return json.replace("${status}", statusCode)
+			.replace("${error}", escapeJson(error != null ? error : ""))
+			.replace("${message}", escapeJson(message != null ? message : ""));
+	}
+
+	private static String escapeJson(final String s) {
+		return s.replace("\\", "\\\\")
+				.replace("\"", "\\\"")
+				.replace("\r", "\\r")
+				.replace("\n", "\\n")
+				.replace("\t", "\\t");
 	}
 }
