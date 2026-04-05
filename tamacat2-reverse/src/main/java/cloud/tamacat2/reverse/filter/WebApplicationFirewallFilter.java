@@ -30,6 +30,9 @@ import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.protocol.HttpContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,7 +41,17 @@ import cloud.tamacat2.httpd.util.IOUtils;
 
 public class WebApplicationFirewallFilter implements HttpRequestInterceptor {
 
+	static final Logger LOG = LoggerFactory.getLogger(WebApplicationFirewallFilter.class);
+
 	final Map<String, List<Pattern>> rules = new HashMap<>();
+
+	public WebApplicationFirewallFilter() {
+		try {
+			init();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to initialize WAF rules", e);
+		}
+	}
 
 	@Override
 	public void process(final HttpRequest request, final EntityDetails entity, final HttpContext context)
@@ -79,12 +92,7 @@ public class WebApplicationFirewallFilter implements HttpRequestInterceptor {
             final List<Pattern> patList = new ArrayList<>();
             root.get(key).forEach(node -> patList.add(Pattern.compile(node.asText())));
             rules.put(key, patList);
-            System.out.println(key+"="+patList);
+            LOG.debug("WAF rule loaded: {}={}", key, patList);
         }
     }
-
-
-	public static void main(final String... args) throws Exception {
-		new WebApplicationFirewallFilter().init();
-	}
 }
