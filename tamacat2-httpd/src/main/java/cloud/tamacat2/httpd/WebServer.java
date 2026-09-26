@@ -100,7 +100,9 @@ public class WebServer {
 	protected ServerBootstrap serverBootstrap(final HttpConfig config) {
 		final ServerBootstrap bootstrap = ServerBootstrap.bootstrap()
 				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
-				.setCanonicalHostName(config.getCanonicalHostName()) //Not authoritative
+				// Set canonical host name only when provided and authority checking is enabled.
+				// When authority checking is disabled we let the request router accept requests
+				// regardless of the Host header (fallback to primary handlers).
 				.setListenerPort(config.getPort())
 				//.setStreamListener(new TraceHttp1StreamListener("client<-httpd"))
 				//.setSocketConfig(SocketConfig.custom()
@@ -108,13 +110,15 @@ public class WebServer {
 				//.setSoReuseAddress(config.soReuseAddress())
 				//.setSoTimeout(config.getSoTimeout(), TimeUnit.SECONDS).build()
 				;
+		if (config.getCanonicalHostName() != null && config.isAuthorityCheckEnabled()) {
+			bootstrap.setCanonicalHostName(config.getCanonicalHostName());
+		}
 		return bootstrap;
 	}
 	
 	protected CustomServerBootstrap bootstrap(final HttpConfig config) {
 		final CustomServerBootstrap bootstrap = CustomServerBootstrap.bootstrap()
 				.setHttpProcessor(HttpProcessors.customServer(config.getServerName()).build())
-				.setCanonicalHostName(config.getCanonicalHostName()) //Not authoritative
 				.setListenerPort(config.getPort())
 				//.setStreamListener(new TraceHttp1StreamListener("client<-httpd"))
 				//.setSocketConfig(SocketConfig.custom()
@@ -122,14 +126,21 @@ public class WebServer {
 				//.setSoReuseAddress(config.soReuseAddress())
 				//.setSoTimeout(config.getSoTimeout(), TimeUnit.SECONDS).build()
 				;
+		if (config.getCanonicalHostName() != null && config.isAuthorityCheckEnabled()) {
+			bootstrap.setCanonicalHostName(config.getCanonicalHostName());
+		}
 		return bootstrap;
 	}
 	
 	public HttpServer createHttpServer(final HttpConfig config) {
 		final Collection<UrlConfig> configs = config.getUrlConfigs();
 
+		// Use our CustomServerBootstrap so we can optionally disable authority checks
 		final CustomServerBootstrap bootstrap = bootstrap(config);
-		//final ServerBootstrap bootstrap = serverBootstrap(config);
+		// If authority check is disabled in config, tell the bootstrap to ignore authority checks
+		if (!config.isAuthorityCheckEnabled()) {
+			bootstrap.setIgnoreAuthorityCheck(true);
+		}
 		
 		// HTTPS
 		if (config.useHttps()) {
@@ -147,7 +158,7 @@ public class WebServer {
 
 		for (final UrlConfig urlConfig : configs) {
 			register(urlConfig.httpConfig(config), bootstrap);
-			
+
 			//add HttpFilters
 			urlConfig.getHttpFilters().forEach((filter) -> {
 				filter.setUrlConfig(urlConfig);
@@ -172,11 +183,38 @@ public class WebServer {
 		final HttpServer server = bootstrap.create();
 		return server;
 	}
+
+	protected void register(final UrlConfig urlConfig, final ServerBootstrap bootstrap) {
+		registerWebServer(urlConfig, bootstrap);
+	}
+	
+	protected void registerWebServer(final UrlConfig urlConfig, final ServerBootstrap bootstrap) {
+		if (urlConfig.useDirectoryListing()) {
+			register(urlConfig, bootstrap, new WebServerDirectoryFileListHandler(urlConfig));
+		} else {
+			register(urlConfig, bootstrap, new WebServerHandler(urlConfig));
+		}
+	}
+	
+	protected void register(final UrlConfig urlConfig, final ServerBootstrap bootstrap, final HttpRequestHandler handler) {
+		try {
+			if (StringUtils.isNotEmpty(urlConfig.getHostname())) {
+				LOG.info("register: VirtualHost="+getVirtualHost(urlConfig)+", path="+urlConfig.getPath() +"* WebServer");
+				bootstrap.register(urlConfig.getHostname(), urlConfig.getPath() + "*", handler);
+			} else {
+				LOG.info("register: path="+urlConfig.getPath() +"* WebServer");
+				bootstrap.register(urlConfig.getPath() + "*", handler);
+			}
+		} catch (Exception e) {
+			//e.printStackTrace();
+			LOG.error(e.getMessage(), e);
+		}
+	}
 	
 	protected void register(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		registerWebServer(urlConfig, bootstrap);
 	}
-
+	
 	protected void registerWebServer(final UrlConfig urlConfig, final CustomServerBootstrap bootstrap) {
 		if (urlConfig.useDirectoryListing()) {
 			register(urlConfig, bootstrap, new WebServerDirectoryFileListHandler(urlConfig));

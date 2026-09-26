@@ -80,7 +80,7 @@ import org.apache.hc.core5.util.Args;
  *
  * @since 4.4
  */
-
+@Deprecated
 public class CustomServerBootstrap {
 	
 	private final List<RequestRouter.Entry<HttpRequestHandler>> routeEntries;
@@ -102,6 +102,9 @@ public class CustomServerBootstrap {
     private HttpConnectionFactory<? extends DefaultBHttpServerConnection> connectionFactory;
     private ExceptionListener exceptionListener;
     private Http1StreamListener streamListener;
+    // When true, use CustomRequestHandlerRegistry which falls back to primary handlers
+    // when a virtual host does not match. This effectively disables authority checks.
+    private boolean ignoreAuthorityCheck = false;
 
     private CustomServerBootstrap() {
         this.routeEntries = new ArrayList<>();
@@ -113,12 +116,24 @@ public class CustomServerBootstrap {
     }
 
     /**
+     * When set to true the server will use a request mapper that does not
+     * enforce canonical host authority checks and will fall back to primary
+     * handlers when a virtual host is not found.
+     */
+    public final CustomServerBootstrap setIgnoreAuthorityCheck(final boolean ignore) {
+        this.ignoreAuthorityCheck = ignore;
+        return this;
+    }
+
+    /**
      * Sets canonical name (fully qualified domain name) of the server.
      *
      * @since 5.0
      */
     public final CustomServerBootstrap setCanonicalHostName(final String canonicalHostName) {
-        this.canonicalHostName = canonicalHostName;
+    		if (canonicalHostName != null) {
+    			this.canonicalHostName = canonicalHostName;
+    		}
         return this;
     }
 
@@ -353,26 +368,28 @@ public class CustomServerBootstrap {
 	public HttpServer create() {
         //final String actualCanonicalHostName = canonicalHostName != null ? canonicalHostName : InetAddressUtils.getCanonicalLocalHostName();
         final HttpRequestMapper<HttpRequestHandler> requestRouterCopy;
-//        if (lookupRegistry != null && requestRouter == null) {
-//			final CustomRequestHandlerRegistry<HttpRequestHandler> handlerRegistry = new CustomRequestHandlerRegistry<>(
-//                    actualCanonicalHostName,
-//                    () -> lookupRegistry != null ? lookupRegistry : new org.apache.hc.core5.http.protocol.UriPatternMatcher<>());
-//            for (final RequestRouter.Entry<HttpRequestHandler> entry: routeEntries) {
-//                handlerRegistry.register(entry.uriAuthority != null ? entry.uriAuthority.getHostName() : null, entry.route.pattern, entry.route.handler);
-//            }
-//            requestRouterCopy = handlerRegistry;
-//        } else {
+        if (ignoreAuthorityCheck) {
+            final String actualCanonicalHostName = canonicalHostName != null ? canonicalHostName : "localhost";
+            final CustomRequestHandlerRegistry<HttpRequestHandler> handlerRegistry = new CustomRequestHandlerRegistry<>(
+                    actualCanonicalHostName,
+                    UriPatternType.URI_PATTERN);
+            for (final RequestRouter.Entry<HttpRequestHandler> entry: routeEntries) {
+                handlerRegistry.register(entry.uriAuthority != null ? entry.uriAuthority.getHostName() : null,
+                        entry.route.pattern, entry.route.handler);
+            }
+            requestRouterCopy = handlerRegistry;
+        } else {
             if (routeEntries.isEmpty()) {
                 requestRouterCopy = requestRouter;
             } else {
                 requestRouterCopy = RequestRouter.create(
-                		canonicalHostName != null ? new URIAuthority(canonicalHostName): null,
+                        canonicalHostName != null ? new URIAuthority(canonicalHostName): null,
                         UriPatternType.URI_PATTERN,
                         routeEntries,
                         RequestRouter.IGNORE_PORT_AUTHORITY_RESOLVER,
                         requestRouter);
             }
-//        }
+        }
 
         final HttpServerRequestHandler requestHandler;
         if (!filters.isEmpty()) {

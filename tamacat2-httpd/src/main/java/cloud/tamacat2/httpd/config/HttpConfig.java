@@ -24,6 +24,9 @@ public class HttpConfig {
 	
 	protected String serverName = "Httpd";
 	protected String canonicalHostName;
+	// When false, the server will not perform canonical host authority checks
+	// (accept requests regardless of Host header). Default is true.
+	protected boolean authorityCheck = true;
 	protected int port = 80;
 	protected boolean useHttps;
 	protected HttpsConfig httpsConfig;
@@ -57,6 +60,20 @@ public class HttpConfig {
 	
 	public String getCanonicalHostName() {
 		return canonicalHostName;
+	}
+
+	/**
+	 * Enable or disable canonical host authority checking.
+	 * When disabled the server will not treat requests with a different Host
+	 * header as "Not authoritative" and will fall back to the primary handlers.
+	 */
+	public HttpConfig authorityCheck(final boolean enabled) {
+		this.authorityCheck = enabled;
+		return this;
+	}
+
+	public boolean isAuthorityCheckEnabled() {
+		return authorityCheck;
 	}
 	
 	public int getPort() {

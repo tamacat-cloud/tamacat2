@@ -21,7 +21,7 @@
 	</licenses>
 
 	<properties>
-		<helidon.version>4.5.2</helidon.version>
+		<helidon.version>4.5.5</helidon.version>
 	</properties>
 
 	<dependencies>

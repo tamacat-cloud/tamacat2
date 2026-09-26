@@ -18,7 +18,6 @@ package cloud.tamacat2.reverse.filter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -33,11 +32,11 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import cloud.tamacat2.httpd.error.ForbiddenException;
 import cloud.tamacat2.httpd.util.IOUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class WebApplicationFirewallFilter implements HttpRequestInterceptor {
 
@@ -85,12 +84,12 @@ public class WebApplicationFirewallFilter implements HttpRequestInterceptor {
     }
 	
     void init() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonMapper.builder().build();
         final JsonNode root = mapper.readTree(IOUtils.getInputStream("waf-rules.json"));
-        for (final Iterator<String> it = root.fieldNames(); it.hasNext();) {
-           final  String key = it.next();
+        
+        for (final String key : root.propertyNames()) {
             final List<Pattern> patList = new ArrayList<>();
-            root.get(key).forEach(node -> patList.add(Pattern.compile(node.asText())));
+            root.get(key).forEach(node -> patList.add(Pattern.compile(node.asString())));
             rules.put(key, patList);
             LOG.debug("WAF rule loaded: {}={}", key, patList);
         }

@@ -20,7 +20,9 @@ import cloud.tamacat2.httpd.config.UrlConfig;
 
 void main() {
 	new WebServer().startup(HttpConfig.create().port(8080)
-		.urlConfig(UrlConfig.create().path("/")
+		.canonicalHostName("localhost")
+		.authorityCheck(false)
+		.urlConfig(UrlConfig.create().path("/")		
 			.docsRoot("${server.home}/htdocs/")
 		)
 		//.contentEncoding("gzip")
